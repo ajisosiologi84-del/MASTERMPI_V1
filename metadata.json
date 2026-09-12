@@ -1,0 +1,6 @@
+{
+  "name": "MASTERMPI - Smart MPI & Gamification Engine",
+  "description": "MASTERMPI (Smart MPI & Gamification Engine): Generator Media Pembelajaran Interaktif Kurikulum Merdeka oleh @ajisosiologi 2026. Dilengkapi pengatur identitas karya, materi teori interaktif, gamifikasi kuis edukatif, bank soal HOTS 12 kolom, dan ekspor 100% offline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

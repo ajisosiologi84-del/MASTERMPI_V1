@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* === MPI Custom Interactive Animations === */
+@keyframes animFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes animSlideUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes animBounceIn {
+  0% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1.08); }
+  70% { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes animFlip {
+  0% { opacity: 0; transform: perspective(400px) rotateX(60deg); }
+  100% { opacity: 1; transform: perspective(400px) rotateX(0deg); }
+}
+
+@keyframes animZoomIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes animFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes animPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes animShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+@keyframes animGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.7); }
+}
+
+@keyframes sigmaSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sigmaSpinReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes sigmaShimmer {
+  0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { transform: translateX(200%) rotate(25deg); opacity: 0; }
+}
+
+@keyframes sigmaPulseRing {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0.2; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* Animation Classes */
+.anim-sigma-spin { animation: sigmaSpinSlow 16s linear infinite; }
+.anim-sigma-spin-reverse { animation: sigmaSpinReverse 22s linear infinite; }
+.anim-sigma-shimmer { animation: sigmaShimmer 4s ease-in-out infinite; }
+.anim-sigma-ring { animation: sigmaPulseRing 3s ease-in-out infinite; }
+.anim-fade-in { animation: animFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-slide-up { animation: animSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-bounce-in { animation: animBounceIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+.anim-flip { animation: animFlip 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-zoom-in { animation: animZoomIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-float { animation: animFloat 3s ease-in-out infinite; }
+.anim-pulse { animation: animPulse 2s ease-in-out infinite; }
+.anim-shake { animation: animShake 0.5s ease-in-out both; }
+.anim-glow { animation: animGlow 2s ease-in-out infinite; }
+
+/* Interactive Hover/Tap Classes */
+.anim-hover-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+.anim-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.anim-scale-tap:active {
+  transform: scale(0.97);
+}
+
+/* Speed modifiers */
+.anim-speed-cepat { animation-duration: 0.3s !important; }
+.anim-speed-normal { animation-duration: 0.6s !important; }
+.anim-speed-lambat { animation-duration: 1.2s !important; }
+
+/* Print Media Optimization for Score Recap PDF */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
