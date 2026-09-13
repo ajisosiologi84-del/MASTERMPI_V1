@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MpiConfig } from '../types';
 import { DAFTAR_MATA_PELAJARAN, DAFTAR_KELAS, DAFTAR_FASE } from '../data/subjectOptions';
 import { sound } from '../utils/audio';
+import { bgm, BGM_TRACKS, BgmTrackType } from '../utils/bgmEngine';
 import { 
   UserCheck, 
   School, 
@@ -24,7 +25,14 @@ import {
   Phone,
   Briefcase,
   HelpCircle,
-  Smartphone
+  Smartphone,
+  Music,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  Sliders,
+  FileAudio
 } from 'lucide-react';
 
 interface IdentitasEditorProps {
@@ -59,6 +67,15 @@ export const IdentitasEditor: React.FC<IdentitasEditorProps> = ({
   onGoToPreview
 }) => {
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
+  const [bgmStatus, setBgmStatus] = useState(bgm.getStatus());
+  const audioInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const unsub = bgm.subscribe(() => {
+      setBgmStatus(bgm.getStatus());
+    });
+    return unsub;
+  }, []);
 
   const handleChange = (field: keyof MpiConfig, value: any) => {
     const updated = {
@@ -80,6 +97,49 @@ export const IdentitasEditor: React.FC<IdentitasEditorProps> = ({
     }
 
     onChangeConfig(updated);
+    showSaveToast();
+  };
+
+  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Ukuran file audio terlalu besar (> 8MB). Silakan gunakan file MP3 ringkas agar media pembelajaran tetap ringan.');
+      return;
+    }
+
+    sound.playSuccess();
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        const base64Audio = reader.result;
+        bgm.setCustomAudio(base64Audio);
+        if (!bgmStatus.isPlaying) {
+          bgm.play();
+        }
+        onChangeConfig({
+          ...config,
+          bgmTrack: 'custom',
+          customAudioUrl: base64Audio,
+          customAudioName: file.name
+        });
+        showSaveToast();
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSelectBgmTrack = (trackId: BgmTrackType) => {
+    sound.playClick();
+    bgm.setTrack(trackId, trackId === 'custom' ? config.customAudioUrl : undefined);
+    if (!bgmStatus.isPlaying) {
+      bgm.play();
+    }
+    onChangeConfig({
+      ...config,
+      bgmTrack: trackId
+    });
     showSaveToast();
   };
 
@@ -600,6 +660,112 @@ export const IdentitasEditor: React.FC<IdentitasEditorProps> = ({
                 <span className="text-[11px] text-slate-500 mt-1 block">
                   Waktu acuan bagi peserta didik dalam mempelajari modul dan latihan soal.
                 </span>
+              </div>
+            </div>
+
+            {/* PENGATURAN MUSIK LATAR BELAKANG (BGM OFFLINE) */}
+            <div className="pt-4 border-t border-slate-200/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                    <Music size={16} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-black uppercase tracking-wider text-slate-800 block">
+                      Musik Latar Pengiring (BGM Offline)
+                    </label>
+                    <span className="text-[11px] text-slate-500">
+                      Otomatis tertanam ke berkas HTML ekspor offline
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      bgm.togglePlay();
+                    }}
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-xs transition ${
+                      bgmStatus.isPlaying
+                        ? 'bg-amber-400 hover:bg-amber-300 text-slate-950'
+                        : 'bg-teal-600 hover:bg-teal-500 text-white'
+                    }`}
+                  >
+                    {bgmStatus.isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                    <span>{bgmStatus.isPlaying ? 'Jeda' : 'Putar Tes'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Offline Badge */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center gap-2 text-xs text-emerald-900">
+                <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                <span>
+                  <strong>100% Bebas Kuota:</strong> Synthesizer beroperasi langsung melalui Web Audio API peramban siswa tanpa butuh unduh MP3 eksternal.
+                </span>
+              </div>
+
+              {/* Track Selector Buttons */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {BGM_TRACKS.map(t => {
+                  const isSelected = (config.bgmTrack || 'lofi') === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => handleSelectBgmTrack(t.id)}
+                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                        isSelected
+                          ? 'bg-teal-50 border-teal-500 text-teal-950 ring-2 ring-teal-400/30'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="text-base mb-1">{t.icon}</div>
+                      <div className="font-extrabold text-xs text-slate-900 truncate">{t.title}</div>
+                      <div className="text-[10px] text-teal-700 font-bold uppercase">{t.genre}</div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Audio Upload Row */}
+              <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+                <input
+                  type="file"
+                  ref={audioInputRef}
+                  onChange={handleAudioUpload}
+                  accept="audio/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => audioInputRef.current?.click()}
+                  className="w-full sm:w-auto px-3.5 py-2 rounded-xl border border-dashed border-teal-400 bg-teal-50/40 hover:bg-teal-50 text-teal-800 text-xs font-bold flex items-center justify-center gap-2 transition"
+                >
+                  <FileAudio size={15} />
+                  <span>Unggah Audio MP3 Sendiri</span>
+                </button>
+
+                {config.customAudioUrl && (
+                  <div className="flex-1 flex items-center justify-between gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+                    <span className="truncate text-slate-700 font-bold">🎵 {config.customAudioName || 'Audio Kustom Tersimpan'}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sound.playClick();
+                        handleChange('customAudioUrl', undefined);
+                        handleChange('customAudioName', undefined);
+                        handleSelectBgmTrack('lofi');
+                      }}
+                      className="text-rose-500 hover:text-rose-700 p-1"
+                      title="Hapus"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

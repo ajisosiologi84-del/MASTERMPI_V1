@@ -105,40 +105,24 @@ export const StudentGateModal: React.FC<StudentGateModalProps> = ({
       <div className={`w-full my-auto transition-all duration-300 ${step === 3 ? 'max-w-5xl' : 'max-w-xl'}`}>
         
         {/* =========================================================================
-            STEP 1: TAMPILAN AWAL - MEMASUKKAN NAMA LENGKAP & KELAS SISWA
-            (Terpisah 100%, TIDAK BERDAMPINGAN / BERSEBELAHAN DENGAN IDENTITAS KARYA)
+            STEP 1: TAMPILAN AWAL - HANYA ISIAN NAMA LENGKAP & KELAS (TANPA LAINNYA)
            ========================================================================= */}
         {step === 1 && (
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-bounce-in max-h-[92dvh] flex flex-col">
-            {/* Modal Header */}
-            <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white p-5 sm:p-7 text-center relative shrink-0 border-b border-indigo-500/20">
-              <div className="flex justify-center mb-3">
-                <SigmaLogo 
-                  size="md"
-                  showText={true}
-                  showSubtitle={true}
-                  showAcronym={true}
-                  animated={true}
-                />
-              </div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-snug text-white mt-1">
-                Selamat Datang di Portal Pembelajaran Mandiri
+            {/* Clean, Minimalist Header */}
+            <div className="bg-slate-900 text-white p-5 sm:p-7 text-center relative shrink-0 border-b border-slate-800">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-snug text-white">
+                Masukkan Identitas Siswa
               </h1>
-              <p className="text-cyan-200 text-xs sm:text-sm mt-1 max-w-md mx-auto line-clamp-2">
-                {config.judul} • {config.mataPelajaran} ({config.fase})
+              <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-md mx-auto">
+                Silakan isi nama lengkap dan kelas Anda untuk memulai pembelajaran
               </p>
             </div>
 
-            {/* Form Area */}
-            <form onSubmit={handleNextToStep2} className="p-4 sm:p-7 space-y-4 overflow-y-auto flex-1">
-              <div className="text-center pb-0.5">
-                <p className="text-slate-600 text-xs sm:text-sm">
-                  Silakan masukkan nama lengkap dan kelas Anda untuk memulai pembelajaran:
-                </p>
-              </div>
-
+            {/* Form Area - Focused & Clean */}
+            <form onSubmit={handleNextToStep2} className="p-5 sm:p-8 space-y-5 overflow-y-auto flex-1">
               {errorMessage && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center animate-shake">
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center animate-shake">
                   {errorMessage}
                 </div>
               )}
@@ -162,10 +146,11 @@ export const StudentGateModal: React.FC<StudentGateModalProps> = ({
                     if (errorMessage) setErrorMessage('');
                   }}
                   placeholder="Ketik nama lengkap Anda di sini..."
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-300 text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs bg-slate-50/50"
+                  className="w-full px-4 py-3.5 rounded-xl border border-slate-300 text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs bg-slate-50/70"
+                  required
                 />
                 <span className="text-[11px] text-slate-400 mt-1 block">
-                  Nama Anda akan otomatis dicetak pada sertifikat & kartu hasil evaluasi.
+                  Nama Anda akan otomatis dicetak pada sertifikat &amp; kartu hasil evaluasi.
                 </span>
               </div>
 
@@ -187,18 +172,19 @@ export const StudentGateModal: React.FC<StudentGateModalProps> = ({
                     if (errorMessage) setErrorMessage('');
                   }}
                   placeholder={`Contoh: ${config.kelas || 'Kelas XI'} IPS 1`}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-300 text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs bg-slate-50/50"
+                  className="w-full px-4 py-3.5 rounded-xl border border-slate-300 text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xs bg-slate-50/70"
+                  required
                 />
               </div>
 
               {/* Action Button */}
-              <div className="pt-2">
+              <div className="pt-3">
                 <button
                   type="submit"
                   id="btn-gate-continue"
-                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-sm sm:text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 group cursor-pointer active:scale-98"
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 group cursor-pointer active:scale-98"
                 >
-                  <span>Lanjutkan ke Identitas Karya →</span>
+                  <span>Lanjutkan</span>
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -491,135 +477,167 @@ export const StudentGateModal: React.FC<StudentGateModalProps> = ({
               </div>
             )}
 
-            {/* 3 Interactive Cards matching user's image with MPI Prerequisite Rules */}
+            {/* 3 Interactive Modern Cards with Contemporary Circular Icons */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
               
-              {/* CARD 1: BELAJAR (Materi Pembelajaran) - Always Unlocked */}
+              {/* CARD 1: BELAJAR (Materi Pembelajaran) */}
               <button
                 type="button"
                 id="btn-select-belajar"
                 onClick={() => handleSelectModule('materi')}
-                className="w-full bg-[#335372] hover:bg-[#2c4762] rounded-[30px] sm:rounded-[34px] p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group min-h-[350px] border-4 border-transparent hover:border-white/30 relative"
+                className="w-full bg-white hover:bg-slate-50/80 rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg hover:shadow-2xl hover:-translate-y-2.5 transition-all duration-300 cursor-pointer group min-h-[360px] border-2 border-slate-100 hover:border-blue-400/60 relative overflow-hidden"
               >
-                <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-emerald-500/80 text-white backdrop-blur-xs flex items-center gap-1 text-[11px] font-black border border-white/30 shadow-xs">
-                  <CheckCircle2 size={12} /> Terbuka
+                {/* Status Badge */}
+                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-700 flex items-center gap-1 text-[11px] font-black border border-emerald-500/30 shadow-xs">
+                  <CheckCircle2 size={13} className="text-emerald-600" />
+                  <span>Terbuka</span>
                 </div>
 
-                {/* White Circle Container */}
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white flex flex-col items-center justify-center p-3 shadow-md border-2 border-white/60 group-hover:scale-105 transition-transform duration-300">
-                  <div className="w-14 h-11 rounded-lg border border-dashed border-sky-300 bg-sky-50 flex items-center justify-center mb-1 shadow-xs">
-                    <BookOpen size={24} className="text-sky-600" />
+                {/* Modern Circular Icon Container */}
+                <div className="relative mt-2">
+                  {/* Ambient Glow */}
+                  <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 opacity-20 group-hover:opacity-40 blur-md transition-opacity duration-300"></div>
+                  
+                  {/* Outer Ring & Main Circular Orb */}
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-1 shadow-xl group-hover:scale-105 transition-transform duration-300">
+                    <div className="w-full h-full rounded-full bg-white/95 flex flex-col items-center justify-center p-3">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-100/90 text-blue-700 flex items-center justify-center shadow-inner group-hover:rotate-3 transition-transform">
+                        <BookOpen size={28} className="text-blue-600 stroke-[2.3]" />
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-extrabold text-slate-600">Belajar</span>
                 </div>
 
                 {/* Main Label */}
                 <div className="my-4">
-                  <span className="text-2xl sm:text-3xl font-black text-white tracking-wide block">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight block group-hover:text-blue-600 transition-colors">
                     Belajar
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium block mt-1">
+                    Pelajari modul & konsep materi
                   </span>
                 </div>
 
-                {/* Pill Chip */}
+                {/* Modern Pill Chip */}
                 <div className="w-full">
-                  <div className="px-5 py-2.5 rounded-full bg-black/25 text-white/95 text-xs sm:text-sm font-black tracking-wide backdrop-blur-xs shadow-xs group-hover:bg-black/35 transition">
+                  <div className="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-700 text-xs sm:text-sm font-black tracking-wide border border-slate-200 group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:border-blue-200 transition">
                     Materi Pembelajaran
                   </div>
                 </div>
               </button>
 
-              {/* CARD 2: BERMAIN (Permainan Interaktif) - Unlocked after Materi */}
+              {/* CARD 2: BERMAIN (Permainan Interaktif) */}
               <button
                 type="button"
                 id="btn-select-bermain"
                 onClick={() => handleSelectModule('bermain')}
-                className={`w-full bg-[#b8332c] hover:bg-[#a12923] rounded-[30px] sm:rounded-[34px] p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group min-h-[350px] border-4 relative ${
+                className={`w-full bg-white rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg transition-all duration-300 cursor-pointer group min-h-[360px] border-2 relative overflow-hidden ${
                   isMateriCompleted 
-                    ? 'hover:-translate-y-2 border-transparent hover:border-white/30' 
-                    : 'opacity-90 border-amber-400/40'
+                    ? 'hover:bg-slate-50/80 hover:shadow-2xl hover:-translate-y-2.5 border-slate-100 hover:border-rose-400/60' 
+                    : 'border-slate-200/80 opacity-90'
                 }`}
               >
-                {/* Lock or Unlock Badge */}
-                <div className={`absolute top-4 right-4 px-2.5 py-1 rounded-full backdrop-blur-xs flex items-center gap-1 text-[11px] font-black border shadow-xs ${
+                {/* Status Badge */}
+                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 text-[11px] font-black border shadow-xs ${
                   isMateriCompleted 
-                    ? 'bg-emerald-500/80 text-white border-white/30' 
-                    : 'bg-black/60 text-amber-300 border-amber-400/40'
+                    ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' 
+                    : 'bg-amber-500/15 text-amber-700 border-amber-500/30'
                 }`}>
-                  {isMateriCompleted ? <CheckCircle2 size={12} /> : <Lock size={12} />}
+                  {isMateriCompleted ? <CheckCircle2 size={13} className="text-emerald-600" /> : <Lock size={13} className="text-amber-600" />}
                   <span>{isMateriCompleted ? 'Terbuka ✨' : 'Terkunci'}</span>
                 </div>
 
-                {/* White Circle Container */}
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white flex flex-col items-center justify-center p-3 shadow-md border-2 border-white/60 group-hover:scale-105 transition-transform duration-300">
-                  <div className="w-14 h-11 rounded-lg border border-dashed border-rose-300 bg-rose-50 flex items-center justify-center mb-1 shadow-xs">
-                    <Gamepad2 size={24} className="text-rose-600" />
+                {/* Modern Circular Icon Container */}
+                <div className="relative mt-2">
+                  {/* Ambient Glow */}
+                  <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-rose-500 to-pink-600 opacity-20 group-hover:opacity-40 blur-md transition-opacity duration-300"></div>
+                  
+                  {/* Outer Ring & Main Circular Orb */}
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-rose-600 via-pink-600 to-amber-400 p-1 shadow-xl group-hover:scale-105 transition-transform duration-300">
+                    <div className="w-full h-full rounded-full bg-white/95 flex flex-col items-center justify-center p-3">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-100/90 text-rose-700 flex items-center justify-center shadow-inner group-hover:-rotate-3 transition-transform">
+                        <Gamepad2 size={28} className="text-rose-600 stroke-[2.3]" />
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-extrabold text-slate-600">Bermain</span>
                 </div>
 
                 {/* Main Label */}
                 <div className="my-4">
-                  <span className="text-2xl sm:text-3xl font-black text-white tracking-wide block">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight block group-hover:text-rose-600 transition-colors">
                     Bermain
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium block mt-1">
+                    Uji pemahaman lewat mini-games
                   </span>
                 </div>
 
-                {/* Pill Chip */}
+                {/* Modern Pill Chip */}
                 <div className="w-full">
-                  <div className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-black tracking-wide backdrop-blur-xs shadow-xs transition ${
+                  <div className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-black tracking-wide border transition ${
                     isMateriCompleted 
-                      ? 'bg-black/25 text-white/95 group-hover:bg-black/35' 
-                      : 'bg-black/40 text-amber-200'
+                      ? 'bg-slate-100 text-slate-700 border-slate-200 group-hover:bg-rose-50 group-hover:text-rose-700 group-hover:border-rose-200' 
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
                   }`}>
-                    {isMateriCompleted ? `${totalGames} Permainan Interaktif` : '🔒 Selesaikan Modul Materi'}
+                    {isMateriCompleted ? `${totalGames} Permainan Interaktif` : '🔒 Selesaikan Belajar'}
                   </div>
                 </div>
               </button>
 
-              {/* CARD 3: BERLATIH (Soal Evaluasi) - Unlocked after Materi & Bermain */}
+              {/* CARD 3: BERLATIH (Soal Evaluasi) */}
               <button
                 type="button"
                 id="btn-select-berlatih"
                 onClick={() => handleSelectModule('latih')}
-                className={`w-full bg-[#c96f2d] hover:bg-[#b05f24] rounded-[30px] sm:rounded-[34px] p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group min-h-[350px] border-4 relative ${
+                className={`w-full bg-white rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-between text-center shadow-lg transition-all duration-300 cursor-pointer group min-h-[360px] border-2 relative overflow-hidden ${
                   isBermainCompleted 
-                    ? 'hover:-translate-y-2 border-transparent hover:border-white/30' 
-                    : 'opacity-90 border-amber-400/40'
+                    ? 'hover:bg-slate-50/80 hover:shadow-2xl hover:-translate-y-2.5 border-slate-100 hover:border-amber-400/60' 
+                    : 'border-slate-200/80 opacity-90'
                 }`}
               >
-                {/* Lock or Unlock Badge */}
-                <div className={`absolute top-4 right-4 px-2.5 py-1 rounded-full backdrop-blur-xs flex items-center gap-1 text-[11px] font-black border shadow-xs ${
+                {/* Status Badge */}
+                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1 text-[11px] font-black border shadow-xs ${
                   isBermainCompleted 
-                    ? 'bg-emerald-500/80 text-white border-white/30' 
-                    : 'bg-black/60 text-amber-300 border-amber-400/40'
+                    ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' 
+                    : 'bg-amber-500/15 text-amber-700 border-amber-500/30'
                 }`}>
-                  {isBermainCompleted ? <CheckCircle2 size={12} /> : <Lock size={12} />}
+                  {isBermainCompleted ? <CheckCircle2 size={13} className="text-emerald-600" /> : <Lock size={13} className="text-amber-600" />}
                   <span>{isBermainCompleted ? 'Terbuka ✨' : 'Terkunci'}</span>
                 </div>
 
-                {/* White Circle Container */}
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white flex flex-col items-center justify-center p-3 shadow-md border-2 border-white/60 group-hover:scale-105 transition-transform duration-300">
-                  <div className="w-14 h-11 rounded-lg border border-dashed border-amber-300 bg-amber-50 flex items-center justify-center mb-1 shadow-xs">
-                    <Target size={24} className="text-amber-600" />
+                {/* Modern Circular Icon Container */}
+                <div className="relative mt-2">
+                  {/* Ambient Glow */}
+                  <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 opacity-20 group-hover:opacity-40 blur-md transition-opacity duration-300"></div>
+                  
+                  {/* Outer Ring & Main Circular Orb */}
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 p-1 shadow-xl group-hover:scale-105 transition-transform duration-300">
+                    <div className="w-full h-full rounded-full bg-white/95 flex flex-col items-center justify-center p-3">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-100/90 text-amber-700 flex items-center justify-center shadow-inner group-hover:rotate-6 transition-transform">
+                        <Target size={28} className="text-amber-600 stroke-[2.3]" />
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-extrabold text-slate-600">Berlatih</span>
                 </div>
 
                 {/* Main Label */}
                 <div className="my-4">
-                  <span className="text-2xl sm:text-3xl font-black text-white tracking-wide block">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight block group-hover:text-amber-600 transition-colors">
                     Berlatih
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium block mt-1">
+                    Evaluasi capaian & cetak kartu hasil
                   </span>
                 </div>
 
-                {/* Pill Chip */}
+                {/* Modern Pill Chip */}
                 <div className="w-full">
-                  <div className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-black tracking-wide backdrop-blur-xs shadow-xs transition ${
+                  <div className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-black tracking-wide border transition ${
                     isBermainCompleted 
-                      ? 'bg-black/25 text-white/95 group-hover:bg-black/35' 
-                      : 'bg-black/40 text-amber-200'
+                      ? 'bg-slate-100 text-slate-700 border-slate-200 group-hover:bg-amber-50 group-hover:text-amber-700 group-hover:border-amber-200' 
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
                   }`}>
-                    {isBermainCompleted ? `${totalSoal} Soal Evaluasi` : '🔒 Selesaikan Belajar & Bermain'}
+                    {isBermainCompleted ? `${totalSoal} Soal Evaluasi` : '🔒 Selesaikan Bermain'}
                   </div>
                 </div>
               </button>

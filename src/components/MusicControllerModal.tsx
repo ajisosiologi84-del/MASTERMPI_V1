@@ -12,22 +12,31 @@ import {
   Radio, 
   X,
   Headphones,
-  FileAudio
+  FileAudio,
+  Trash2,
+  CheckCircle2
 } from 'lucide-react';
 import { bgm, BGM_TRACKS, BgmTrackType } from '../utils/bgmEngine';
 import { sound } from '../utils/audio';
+import { MpiConfig } from '../types';
 
 interface MusicControllerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  config?: MpiConfig;
+  onChangeConfig?: (newConfig: MpiConfig) => void;
 }
 
 export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
   isOpen,
-  onClose
+  onClose,
+  config,
+  onChangeConfig
 }) => {
   const [bgmStatus, setBgmStatus] = useState(bgm.getStatus());
-  const [customFileName, setCustomFileName] = useState<string>('');
+  const [customFileName, setCustomFileName] = useState<string>(
+    config?.customAudioName || (config?.customAudioUrl ? 'Musik Kustom Pengembang' : '')
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,13 +46,29 @@ export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
     return unsub;
   }, []);
 
+  // Sync initial config to bgm engine if present
+  useEffect(() => {
+    if (config?.bgmTrack && config.bgmTrack !== bgm.getStatus().currentTrack) {
+      bgm.setTrack(config.bgmTrack, config.customAudioUrl);
+    }
+    if (typeof config?.bgmVolume === 'number') {
+      bgm.setVolume(config.bgmVolume);
+    }
+  }, [config?.bgmTrack, config?.customAudioUrl, config?.bgmVolume]);
+
   if (!isOpen) return null;
 
   const handleSelectTrack = (trackId: BgmTrackType) => {
     sound.playClick();
-    bgm.setTrack(trackId);
+    bgm.setTrack(trackId, trackId === 'custom' ? config?.customAudioUrl : undefined);
     if (!bgmStatus.isPlaying) {
       bgm.play();
+    }
+    if (config && onChangeConfig) {
+      onChangeConfig({
+        ...config,
+        bgmTrack: trackId
+      });
     }
   };
 
@@ -51,18 +76,56 @@ export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Ukuran file audio terlalu besar (> 8MB). Silakan gunakan file MP3/WAV berdurasi singkat / ringkas agar file HTML tetap cepat dimuat.');
+      return;
+    }
+
     sound.playSuccess();
     setCustomFileName(file.name);
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        bgm.setCustomAudio(reader.result);
+        const base64Audio = reader.result;
+        bgm.setCustomAudio(base64Audio);
         if (!bgmStatus.isPlaying) {
           bgm.play();
+        }
+        if (config && onChangeConfig) {
+          onChangeConfig({
+            ...config,
+            bgmTrack: 'custom',
+            customAudioUrl: base64Audio,
+            customAudioName: file.name
+          });
         }
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleRemoveCustomAudio = () => {
+    sound.playClick();
+    setCustomFileName('');
+    handleSelectTrack('lofi');
+    if (config && onChangeConfig) {
+      onChangeConfig({
+        ...config,
+        bgmTrack: 'lofi',
+        customAudioUrl: undefined,
+        customAudioName: undefined
+      });
+    }
+  };
+
+  const handleVolumeChange = (vol: number) => {
+    bgm.setVolume(vol);
+    if (config && onChangeConfig) {
+      onChangeConfig({
+        ...config,
+        bgmVolume: vol
+      });
+    }
   };
 
   return (
@@ -149,7 +212,7 @@ export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
               max="1"
               step="0.05"
               value={bgmStatus.isMuted ? 0 : bgmStatus.volume}
-              onChange={(e) => bgm.setVolume(parseFloat(e.target.value))}
+              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
               className="w-20 accent-teal-400 h-1.5 bg-slate-700 rounded-lg cursor-pointer"
             />
           </div>
@@ -157,6 +220,15 @@ export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
 
         {/* Modal Body: Track Selection */}
         <div className="p-5 overflow-y-auto space-y-4">
+          
+          {/* Offline Sync Banner */}
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-start gap-2.5">
+            <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+            <div className="text-xs text-emerald-900 leading-snug">
+              <span className="font-bold">100% Offline Embedded:</span> Musik yang Anda pilih atau unggah di sini akan <strong>otomatis tersimpan ke konfigurasi MPI</strong> dan <strong>tertanam langsung ke dalam file HTML hasil ekspor</strong>. Siswa dapat mendengarkannya tanpa koneksi internet!
+            </div>
+          </div>
+
           <div className="text-xs font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <Radio size={14} className="text-teal-600" />
             <span>Pilih Tema Musik Instrumen (100% Offline Synthesizer)</span>
@@ -212,21 +284,34 @@ export const MusicControllerModal: React.FC<MusicControllerModalProps> = ({
               className="hidden"
             />
 
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl border-2 border-dashed border-teal-300 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50 text-teal-800 font-bold text-xs flex items-center justify-center gap-2 transition"
-              >
-                <FileAudio size={16} />
-                <span>Pilih Berkas Audio dari Komputer/HP</span>
-              </button>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl border-2 border-dashed border-teal-300 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50 text-teal-800 font-bold text-xs flex items-center justify-center gap-2 transition"
+                >
+                  <FileAudio size={16} />
+                  <span>Pilih Berkas Audio dari Komputer/HP</span>
+                </button>
 
-              {customFileName && (
-                <div className="text-xs text-slate-600 truncate flex items-center gap-1 font-semibold">
-                  <span>🎵 {customFileName}</span>
-                </div>
-              )}
+                {customFileName && (
+                  <div className="flex-1 flex items-center justify-between gap-2 px-3 py-2 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+                    <span className="truncate font-semibold text-slate-800">🎵 {customFileName}</span>
+                    <button
+                      type="button"
+                      onClick={handleRemoveCustomAudio}
+                      className="p-1 text-rose-500 hover:bg-rose-100 rounded-md transition"
+                      title="Hapus Lagu Kustom & Kembali ke Synthesizer"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Berkas audio akan diubah menjadi format data Base64 aman yang tersimpan di dalam berkas HTML tanpa butuh internet.
+              </p>
             </div>
           </div>
         </div>

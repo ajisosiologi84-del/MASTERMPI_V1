@@ -6,13 +6,19 @@
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private enabled: boolean = true;
+  private bgmPlaying: boolean = false;
+  private bgmTimer: number | null = null;
+  private bgmStep: number = 0;
+  private bgmGain: GainNode | null = null;
 
   private getContext(): AudioContext | null {
-    if (!this.enabled) return null;
     if (!this.ctx && typeof window !== 'undefined') {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
+        this.bgmGain = this.ctx.createGain();
+        this.bgmGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        this.bgmGain.connect(this.ctx.destination);
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
@@ -27,6 +33,95 @@ class SoundEngine {
 
   public isEnabled(): boolean {
     return this.enabled;
+  }
+
+  public isBgmActive(): boolean {
+    return this.bgmPlaying;
+  }
+
+  public startBgm() {
+    const ctx = this.getContext();
+    if (!ctx || this.bgmPlaying) return;
+    this.bgmPlaying = true;
+    this.scheduleBgm();
+  }
+
+  public stopBgm() {
+    this.bgmPlaying = false;
+    if (this.bgmTimer) {
+      clearTimeout(this.bgmTimer);
+      this.bgmTimer = null;
+    }
+  }
+
+  public toggleBgm(): boolean {
+    if (this.bgmPlaying) {
+      this.stopBgm();
+    } else {
+      this.startBgm();
+    }
+    return this.bgmPlaying;
+  }
+
+  private scheduleBgm() {
+    if (!this.bgmPlaying) return;
+    const ctx = this.getContext();
+    if (!ctx || !this.bgmGain) return;
+
+    const now = ctx.currentTime;
+    const beat = 0.32;
+    const chords = [
+      { bass: 130.81, notes: [261.63, 329.63, 392.00, 493.88] },
+      { bass: 110.00, notes: [220.00, 261.63, 329.63, 392.00] },
+      { bass: 87.31,  notes: [174.61, 261.63, 349.23, 440.00] },
+      { bass: 98.00,  notes: [196.00, 293.66, 392.00, 493.88] },
+    ];
+
+    const chord = chords[Math.floor((this.bgmStep / 8) % chords.length)];
+    const stepInBar = this.bgmStep % 8;
+
+    if (stepInBar === 0) {
+      this.playBgmTone(chord.bass, now, beat * 3.5, 'triangle', 0.08);
+    }
+
+    const note = chord.notes[stepInBar % chord.notes.length];
+    this.playBgmTone(note, now, beat * 1.2, 'sine', 0.06);
+
+    if (stepInBar === 2 || stepInBar === 5) {
+      this.playBgmTone(note * 1.5, now + 0.05, beat * 0.9, 'sine', 0.04);
+    }
+
+    this.bgmStep++;
+    this.bgmTimer = window.setTimeout(() => this.scheduleBgm(), beat * 1000);
+  }
+
+  private playBgmTone(freq: number, time: number, duration: number, type: OscillatorType, maxGain: number) {
+    const ctx = this.getContext();
+    if (!ctx || !this.bgmGain) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1100, time);
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, time);
+
+      gain.gain.setValueAtTime(0.001, time);
+      gain.gain.exponentialRampToValueAtTime(maxGain, time + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.bgmGain);
+
+      osc.start(time);
+      osc.stop(time + duration);
+    } catch {
+      // Fallback
+    }
   }
 
   public playClick() {

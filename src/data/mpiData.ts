@@ -21,7 +21,10 @@ export const CONFIG: MpiConfig = {
   penyusun: "Aji Sosiologi",
   instansi: "SMA Negeri Unggulan",
   kkm: 75,
-  durasiMenit: 45
+  durasiMenit: 45,
+  bgmTrack: 'lofi',
+  bgmVolume: 0.35,
+  bgmAutoPlay: true
 };
 
 export const MATERI: MateriItem[] = [

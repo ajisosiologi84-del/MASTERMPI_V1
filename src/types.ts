@@ -24,6 +24,11 @@ export interface MpiConfig {
   durasiMenit: number;
   logoUrl?: string;
   coverUrl?: string;
+  bgmTrack?: 'lofi' | 'cheerful' | 'acoustic' | 'synthwave' | 'custom';
+  customAudioUrl?: string;
+  customAudioName?: string;
+  bgmVolume?: number;
+  bgmAutoPlay?: boolean;
 }
 
 export interface MiniKuis {

@@ -592,6 +592,8 @@ export default function App() {
       <MusicControllerModal
         isOpen={isMusicModalOpen}
         onClose={() => setIsMusicModalOpen(false)}
+        config={mpiConfig}
+        onChangeConfig={(newCfg) => setMpiConfig(newCfg)}
       />
 
       {/* Music Prompt Modal on Module Entry */}
@@ -602,6 +604,8 @@ export default function App() {
           setIsMusicPromptOpen(false);
           setIsMusicModalOpen(true);
         }}
+        config={mpiConfig}
+        onChangeConfig={(newCfg) => setMpiConfig(newCfg)}
       />
 
       {/* Student Gate Intro & Identity Modal for Live Preview */}

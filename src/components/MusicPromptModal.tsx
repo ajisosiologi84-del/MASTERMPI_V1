@@ -2,32 +2,52 @@ import React, { useState } from 'react';
 import { Music, VolumeX, Sparkles, Headphones, Check } from 'lucide-react';
 import { bgm, BGM_TRACKS, BgmTrackType } from '../utils/bgmEngine';
 import { sound } from '../utils/audio';
+import { MpiConfig } from '../types';
 
 interface MusicPromptModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenMusicSettings?: () => void;
+  config?: MpiConfig;
+  onChangeConfig?: (newConfig: MpiConfig) => void;
 }
 
 export const MusicPromptModal: React.FC<MusicPromptModalProps> = ({
   isOpen,
   onClose,
-  onOpenMusicSettings
+  onOpenMusicSettings,
+  config,
+  onChangeConfig
 }) => {
-  const [selectedTrack, setSelectedTrack] = useState<BgmTrackType>('lofi');
+  const [selectedTrack, setSelectedTrack] = useState<BgmTrackType>(
+    config?.bgmTrack || 'lofi'
+  );
 
   if (!isOpen) return null;
 
   const handleEnableMusic = () => {
     sound.playSuccess();
-    bgm.setTrack(selectedTrack);
+    bgm.setTrack(selectedTrack, selectedTrack === 'custom' ? config?.customAudioUrl : undefined);
     bgm.play();
+    if (config && onChangeConfig) {
+      onChangeConfig({
+        ...config,
+        bgmTrack: selectedTrack,
+        bgmAutoPlay: true
+      });
+    }
     onClose();
   };
 
   const handleDisableMusic = () => {
     sound.playClick();
     bgm.stop();
+    if (config && onChangeConfig) {
+      onChangeConfig({
+        ...config,
+        bgmAutoPlay: false
+      });
+    }
     onClose();
   };
 

@@ -818,6 +818,7 @@ export function generateStandaloneMpiHtml(
     @keyframes mpiSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes mpiBounceIn { 0% { opacity: 0; transform: scale(0.9); } 60% { opacity: 1; transform: scale(1.03); } 100% { transform: scale(1); } }
     @keyframes mpiPulseSlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+    @keyframes mpiEqBar { 0%, 100% { height: 4px; } 50% { height: 16px; } }
 
     .anim-fade-in { animation: mpiFadeIn 0.4s ease-out both; }
     .anim-slide-up { animation: mpiSlideUp 0.4s ease-out both; }
@@ -826,6 +827,62 @@ export function generateStandaloneMpiHtml(
     .anim-pulse { animation: mpiPulseSlow 3s infinite ease-in-out; }
     .anim-hover-lift:hover { transform: translateY(-3px); transition: transform 0.2s ease; }
     .anim-scale-tap:active { transform: scale(0.97); }
+
+    /* OFFLINE MUSIC MODAL */
+    .music-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      background: rgba(2, 6, 23, 0.82);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .music-modal-card {
+      background: #ffffff;
+      border-radius: 24px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.5);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+    }
+    .music-track-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin: 0.75rem 0;
+    }
+    @media (max-width: 480px) {
+      .music-track-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .music-track-btn {
+      padding: 0.75rem;
+      border-radius: 14px;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .music-track-btn:hover {
+      border-color: #0d9488;
+      background: #f0fdfa;
+    }
+    .music-track-btn.active {
+      border-color: #0d9488;
+      background: #ccfbf1;
+      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.3);
+    }
 
     /* GERBANG MASUK SISWA & ANIMASI IDENTITAS KARYA */
     .gate-overlay {
@@ -1050,12 +1107,31 @@ export function generateStandaloneMpiHtml(
       background: #2563eb;
       color: #ffffff;
     }
+    .btn-teacher {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-teacher:hover {
+      background: #d97706;
+      color: #ffffff;
+      border-color: #f59e0b;
+    }
 
-    /* STEP 3 SEPERTI GAMBAR: Mau melakukan apa hari ini? */
+    /* STEP 3: Mau melakukan apa hari ini? */
     .gate-step3-card {
-      background: #fcf8f2 !important;
-      border: 1px solid #e8ded1 !important;
-      border-radius: 34px !important;
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 32px !important;
       max-width: 980px !important;
       padding: 2.25rem 2.5rem;
       width: 100%;
@@ -1081,8 +1157,8 @@ export function generateStandaloneMpiHtml(
       }
     }
     .module-card-choice {
-      border: 3px solid transparent;
-      border-radius: 32px;
+      border: 2px solid #f1f5f9;
+      border-radius: 28px;
       padding: 2rem 1.25rem;
       display: flex;
       flex-direction: column;
@@ -1090,84 +1166,151 @@ export function generateStandaloneMpiHtml(
       justify-content: space-between;
       text-align: center;
       cursor: pointer;
-      min-height: 350px;
-      box-shadow: 0 12px 24px -6px rgba(0,0,0,0.25);
+      min-height: 360px;
+      background: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.04);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none;
       box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
     }
     .module-card-choice:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 22px 35px -8px rgba(0,0,0,0.35);
-      border-color: rgba(255,255,255,0.4);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.12);
     }
     .module-card-choice:active {
-      transform: scale(0.97);
-    }
-    .module-card-choice.card-belajar {
-      background: #335372;
+      transform: scale(0.98);
     }
     .module-card-choice.card-belajar:hover {
-      background: #2a455f;
-    }
-    .module-card-choice.card-bermain {
-      background: #b8332c;
+      border-color: #60a5fa;
     }
     .module-card-choice.card-bermain:hover {
-      background: #9f2a24;
-    }
-    .module-card-choice.card-berlatih {
-      background: #c96f2d;
+      border-color: #fb7185;
     }
     .module-card-choice.card-berlatih:hover {
-      background: #af5e23;
+      border-color: #fbbf24;
+    }
+
+    /* Modern Circular Icon Orb */
+    .module-orb-wrapper {
+      position: relative;
+      margin-top: 0.5rem;
+    }
+    .module-orb-glow {
+      position: absolute;
+      inset: -6px;
+      border-radius: 9999px;
+      opacity: 0.2;
+      filter: blur(8px);
+      transition: opacity 0.3s;
+    }
+    .module-card-choice:hover .module-orb-glow {
+      opacity: 0.45;
     }
     .module-card-circle {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .module-card-choice:hover .module-card-circle {
+      transform: scale(1.06);
+    }
+    .module-card-inner-circle {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       background: #ffffff;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-      border: 3px solid rgba(255,255,255,0.8);
-      margin-bottom: 0.75rem;
-      transition: transform 0.3s ease;
-      flex-shrink: 0;
-    }
-    .module-card-choice:hover .module-card-circle {
-      transform: scale(1.08);
     }
     .module-icon-box {
-      width: 52px;
-      height: 42px;
-      border-radius: 8px;
-      border: 1.5px dashed;
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 4px;
+      transition: transform 0.3s ease;
     }
+    .module-card-choice:hover .module-icon-box {
+      transform: scale(1.08) rotate(3deg);
+    }
+
     .module-card-title {
-      font-size: 1.85rem;
+      font-size: 1.75rem;
       font-weight: 900;
-      color: #ffffff;
-      letter-spacing: 0.02em;
-      margin: 0.5rem 0 0.85rem;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin: 0.75rem 0 0.25rem;
+      transition: color 0.2s;
     }
+    .module-card-choice.card-belajar:hover .module-card-title {
+      color: #2563eb;
+    }
+    .module-card-choice.card-bermain:hover .module-card-title {
+      color: #e11d48;
+    }
+    .module-card-choice.card-berlatih:hover .module-card-title {
+      color: #d97706;
+    }
+
+    .module-card-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
     .module-card-pill {
-      background: rgba(0, 0, 0, 0.25);
-      color: #ffffff;
+      background: #f1f5f9;
+      color: #334155;
       padding: 0.65rem 1.25rem;
-      border-radius: 9999px;
-      font-size: 0.85rem;
+      border-radius: 16px;
+      font-size: 0.82rem;
       font-weight: 800;
-      letter-spacing: 0.02em;
-      width: 95%;
+      letter-spacing: 0.01em;
+      width: 100%;
       box-sizing: border-box;
-      backdrop-filter: blur(4px);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .module-card-choice.card-belajar:hover .module-card-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .module-card-choice.card-bermain:hover .module-card-pill {
+      background: #fff1f2;
+      color: #be123c;
+      border-color: #fecdd3;
+    }
+    .module-card-choice.card-berlatih:hover .module-card-pill {
+      background: #fffbeb;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+
+    .module-badge-status {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     @media print {
@@ -1181,49 +1324,34 @@ export function generateStandaloneMpiHtml(
 <body>
 
   <!-- =========================================================================
-       GERBANG MASUK SISWA & ANIMASI IDENTITAS KARYA (STEP 1 & 2)
+       GERBANG MASUK SISWA (INPUT IDENTITAS SISWA)
        ========================================================================= -->
   <div id="gateOverlay" class="gate-overlay">
     
-    <!-- STEP 1: ISIAN NAMA SISWA DAN KELAS -->
+    <!-- MODAL 1: ISIAN NAMA DAN KELAS SISWA (MINIMALIS & ELEGAN) -->
     <div id="gateStep1" class="gate-card anim-bounce-in">
-      <div class="gate-header-blue" style="background: linear-gradient(135deg, #020617, #0f172a, #1e1b4b); border-bottom: 1px solid rgba(56,189,248,0.25);">
-        <!-- Animated SIGMA Logo in Step 1 -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 0.75rem;">
-          <div style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #090d16, #1e1b4b); border: 1.5px solid rgba(56, 189, 248, 0.6); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(6, 182, 212, 0.45); position: relative; margin-bottom: 0.5rem;">
-            <svg viewBox="0 0 100 100" style="width: 76%; height: 76%;" fill="none">
-              <path d="M 20 22 L 82 22 C 86 22 88 26 85 29 L 75 40 L 48 40 L 32 26 C 28 22 24 22 20 22 Z" fill="#38bdf8" />
-              <path d="M 80 26 L 46 50 L 34 50 L 68 26 Z" fill="#06b6d4" />
-              <path d="M 46 50 L 80 74 L 68 74 L 34 50 Z" fill="#6366f1" />
-              <path d="M 20 78 L 82 78 C 86 78 88 74 85 71 L 75 60 L 48 60 L 32 74 C 28 78 24 78 20 78 Z" fill="#38bdf8" />
-              <rect x="18" y="22" width="10" height="56" rx="4" fill="#38bdf8" />
-              <circle cx="43" cy="50" r="5" fill="#34d399" />
-              <circle cx="43" cy="50" r="9" stroke="#34d399" stroke-width="1.5" stroke-dasharray="2 2" />
-              <path d="M 76 12 L 68 24 H 74 L 70 34 L 80 20 H 74 L 76 12 Z" fill="#fbbf24" />
-            </svg>
-            <div style="position: absolute; bottom: -2px; right: -2px; width: 10px; height: 10px; border-radius: 50%; background: #10b981; border: 2px solid #020617;"></div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.35rem;">
-            <span style="font-weight: 900; color: #ffffff; letter-spacing: 0.05em; font-size: 1.1rem;">SIGMA</span>
-            <span style="font-weight: 900; color: #22d3ee; letter-spacing: 0.05em; font-size: 1.1rem;">OFFLINE</span>
-            <span style="background: rgba(6,182,212,0.2); color: #67e8f9; border: 1px solid rgba(6,182,212,0.4); font-size: 0.65rem; font-weight: 900; padding: 0.1rem 0.4rem; border-radius: 9999px;">100% OFFLINE</span>
-          </div>
-          <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 500; margin-top: 0.15rem;">Smart Interactive Gamification & Media for Autonomous Learning</div>
+      <div class="gate-header-blue" style="background: linear-gradient(135deg, #1e3a8a, #2563eb, #3b82f6); border-bottom: 1px solid rgba(255,255,255,0.15); padding: 2rem 1.5rem 1.5rem; position: relative;">
+        <button 
+          type="button" 
+          id="btnCloseGateStep1" 
+          onclick="closeStudentModal()" 
+          style="display: none; position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: 900; font-size: 0.95rem; line-height: 1;"
+          title="Tutup &amp; Kembali"
+        >
+          ✕
+        </button>
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; color: #dbeafe; margin-bottom: 0.5rem;">
+          <span>👤</span> IDENTITAS PESERTA DIDIK
         </div>
-
-        <h1 style="font-size: 1.45rem; font-weight: 900; margin: 0.25rem 0; letter-spacing: -0.02em; color: #ffffff;">
-          Portal Pembelajaran Mandiri
+        <h1 style="font-size: 1.5rem; font-weight: 900; margin: 0 0 0.35rem; letter-spacing: -0.02em; color: #ffffff;">
+          Masukkan Identitas Siswa
         </h1>
-        <p style="font-size: 0.85rem; color: #bae6fd; margin: 0.25rem auto 0; max-width: 480px;">
-          ${activeConfig.judul} • ${activeConfig.mataPelajaran} (${activeConfig.kelas})
+        <p style="font-size: 0.88rem; color: #dbeafe; margin: 0 auto; max-width: 440px; font-weight: 500;">
+          Silakan isi nama lengkap dan kelas Anda untuk memulai pembelajaran
         </p>
       </div>
 
       <div style="padding: 1.75rem 2rem;">
-        <p style="text-align: center; color: #475569; font-size: 0.88rem; margin-bottom: 1.5rem;">
-          Silakan isi identitas diri Anda sebelum membuka materi pembelajaran, bermain mini-game, dan melakukan evaluasi.
-        </p>
-
         <div id="gateAlertBox" style="display: none; padding: 0.75rem 1rem; border-radius: 12px; background: #fff1f2; border: 1px solid #fecdd3; color: #be123c; font-size: 0.85rem; font-weight: 700; text-align: center; margin-bottom: 1.25rem;"></div>
 
         <form id="formGateSiswa" onsubmit="handleGateStep1Submit(event)">
@@ -1239,9 +1367,6 @@ export function generateStandaloneMpiHtml(
               autocomplete="name" 
               required 
             />
-            <span style="display: block; font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem;">
-              Nama Anda akan dicantumkan secara otomatis pada kartu rapor & hasil evaluasi.
-            </span>
           </div>
 
           <div class="gate-input-group">
@@ -1265,41 +1390,218 @@ export function generateStandaloneMpiHtml(
               class="btn-action anim-hover-lift" 
               style="width: 100%; justify-content: center; padding: 0.95rem 1.5rem; font-size: 1rem; font-weight: 800; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #4f46e5); box-shadow: 0 10px 20px -5px rgba(37,99,235,0.4);"
             >
-              Lanjutkan →
+              🚀 Lanjutkan ke Menu Pembelajaran →
             </button>
           </div>
         </form>
+
+        <div style="margin-top: 1.35rem; padding-top: 1.15rem; border-top: 1px solid #e2e8f0; text-align: center;">
+          <button 
+            type="button" 
+            onclick="openTeacherModal()" 
+            style="background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; font-size: 0.82rem; font-weight: 800; padding: 0.55rem 1.1rem; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; transition: all 0.2s;"
+            onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';"
+            onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';"
+          >
+            <span>🌟</span> Lihat Identitas Pendidik &amp; Pengembang Karya
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- STEP 2: ANIMASI 1. IDENTITAS KARYA MEDIA PEMBELAJARAN (8 POIN) -->
-    <div id="gateStep2" class="gate-card anim-slide-up" style="display: none; max-height: 92vh; display: flex; flex-direction: column;">
+    <!-- MODAL 2: PILIHAN MODUL ("Mau melakukan apa hari ini?") -->
+    <div id="gateStep3" class="gate-card gate-step3-card anim-slide-up" style="display: none;">
       
-      <!-- Header Step 2 -->
-      <div class="gate-header-dark">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-          <div class="gate-badge" style="background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3);">
-            ✓ Siswa Terdaftar: <span id="labelBadgeNama">-</span> (<span id="labelBadgeKelas">-</span>)
-          </div>
+      <!-- Top Bar: Info Siswa & Tombol Identitas Pendidik -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 9999px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 0.78rem; font-weight: 700; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+          <span>Peserta Didik: <strong id="lblStep3StudentNama" style="color: #0f172a;">-</strong> (<strong id="lblStep3StudentKelas" style="color: #0f172a;">-</strong>)</span>
           <button 
             type="button" 
-            onclick="backToGateStep1()" 
-            style="background: transparent; border: none; color: #94a3b8; font-size: 0.78rem; cursor: pointer; text-decoration: underline;"
+            onclick="openStudentModal()" 
+            style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.72rem; font-weight: 800; cursor: pointer; padding: 0.15rem 0.45rem; border-radius: 6px; margin-left: 0.25rem;"
           >
-            ← Ganti Nama
+            ✏️ Ubah
           </button>
         </div>
+        
+        <button 
+          type="button" 
+          onclick="openTeacherModal()" 
+          class="btn-teacher"
+          style="background: #fffbeb; border: 1px solid #fde68a; color: #b45309; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 8px;"
+        >
+          <span>🌟</span> Identitas Pendidik &amp; Pengembang
+        </button>
+      </div>
 
-        <h2 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
-          <span>🌟</span> 1. Identitas Karya Media Pembelajaran :
-        </h2>
-        <p style="font-size: 0.8rem; color: #94a3b8; margin: 0.25rem 0 0;">
-          Identitas resmi kurikulum, sasaran capaian belajar, serta profil pendidik pembuat karya.
+      <!-- Headline & Subtitle -->
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <h1 style="color: #0f172a; font-size: 2.25rem; font-weight: 900; margin: 0; letter-spacing: -0.03em; line-height: 1.2;">
+          Mau melakukan apa hari ini?
+        </h1>
+        <p style="color: #64748b; font-size: 0.95rem; margin: 0.75rem auto 0; max-width: 580px; line-height: 1.5;">
+          Mulailah dari <strong style="color: #2563eb; font-weight: 800;">Belajar</strong>, lanjut ke <strong style="color: #e11d48; font-weight: 800;">Bermain</strong>, lalu uji dirimu di <strong style="color: #d97706; font-weight: 800;">Berlatih</strong>.
         </p>
       </div>
 
-      <!-- Content Step 2 (Scrollable 8 Poin Identitas Karya) -->
-      <div style="padding: 1.5rem 1.75rem; overflow-y: auto; flex: 1;">
+      <!-- 3 Kartu Pilihan dengan Icon Lingkaran Kekinian -->
+      <div class="modules-choice-grid">
+        
+        <!-- KARTU 1: BELAJAR (Materi Pembelajaran) -->
+        <button 
+          type="button" 
+          id="btnSelectBelajar" 
+          onclick="selectModuleAndEnter('materi')" 
+          class="module-card-choice card-belajar"
+        >
+          <div class="module-badge-status" style="background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">
+            <span>✓</span> Terbuka
+          </div>
+
+          <div class="module-orb-wrapper">
+            <div class="module-orb-glow" style="background: linear-gradient(135deg, #06b6d4, #2563eb);"></div>
+            <div class="module-card-circle" style="background: linear-gradient(135deg, #2563eb, #06b6d4, #3b82f6);">
+              <div class="module-card-inner-circle">
+                <div class="module-icon-box" style="background: #eff6ff;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="module-card-title">Belajar</div>
+            <div class="module-card-desc">Pelajari konsep & modul materi</div>
+          </div>
+
+          <div class="module-card-pill">
+            Materi Pembelajaran
+          </div>
+        </button>
+
+        <!-- KARTU 2: BERMAIN (Permainan Interaktif) -->
+        <button 
+          type="button" 
+          id="btnSelectBermain" 
+          onclick="selectModuleAndEnter('bermain')" 
+          class="module-card-choice card-bermain"
+        >
+          <div class="module-badge-status" id="badgeCardBermain" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">
+            <span id="badgeIconBermain">🔒</span> <span id="badgeTextBermain">Terkunci</span>
+          </div>
+
+          <div class="module-orb-wrapper">
+            <div class="module-orb-glow" style="background: linear-gradient(135deg, #f43f5e, #e11d48);"></div>
+            <div class="module-card-circle" style="background: linear-gradient(135deg, #e11d48, #f43f5e, #fb7185);">
+              <div class="module-card-inner-circle">
+                <div class="module-icon-box" style="background: #fff1f2;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" y1="12" x2="10" y2="12"/>
+                    <line x1="8" y1="10" x2="8" y2="14"/>
+                    <line x1="15" y1="13" x2="15.01" y2="13"/>
+                    <line x1="18" y1="11" x2="18.01" y2="11"/>
+                    <rect x="2" y="6" width="20" height="12" rx="2"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="module-card-title">Bermain</div>
+            <div class="module-card-desc">Uji pemahaman lewat mini-games</div>
+          </div>
+
+          <div class="module-card-pill" id="pillCardBermain">
+            ${activeBermain.length} Permainan Interaktif
+          </div>
+        </button>
+
+        <!-- KARTU 3: BERLATIH (Soal Evaluasi) -->
+        <button 
+          type="button" 
+          id="btnSelectBerlatih" 
+          onclick="selectModuleAndEnter('latih')" 
+          class="module-card-choice card-berlatih"
+        >
+          <div class="module-badge-status" id="badgeCardBerlatih" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a;">
+            <span id="badgeIconBerlatih">🔒</span> <span id="badgeTextBerlatih">Terkunci</span>
+          </div>
+
+          <div class="module-orb-wrapper">
+            <div class="module-orb-glow" style="background: linear-gradient(135deg, #f59e0b, #d97706);"></div>
+            <div class="module-card-circle" style="background: linear-gradient(135deg, #d97706, #f59e0b, #fbbf24);">
+              <div class="module-card-inner-circle">
+                <div class="module-icon-box" style="background: #fffbeb;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="6"/>
+                    <circle cx="12" cy="12" r="2"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="module-card-title">Berlatih</div>
+            <div class="module-card-desc">Evaluasi capaian &amp; cetak kartu hasil</div>
+          </div>
+
+          <div class="module-card-pill" id="pillCardBerlatih">
+            ${activeLatih.length} Soal Evaluasi
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Footer Info -->
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <span style="font-size: 0.78rem; color: #64748b;">
+          💡 Selesaikan modul secara berurutan sesuai alur MPI (Belajar ➔ Bermain ➔ Berlatih).
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       MODAL TERPISAH: IDENTITAS PENDIDIK & PENGEMBANG KARYA (@ajisosiologi 2026)
+       ========================================================================= -->
+  <div id="modalTeacherOverlay" class="music-modal-overlay" style="display: none;">
+    <div class="gate-card anim-slide-up" style="max-height: 90vh; display: flex; flex-direction: column; max-width: 720px; width: 100%; border-radius: 24px; overflow: hidden; background: #ffffff;">
+      
+      <!-- Modal Header -->
+      <div class="gate-header-dark" style="padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.2rem;">🌟</span>
+            <h2 style="font-size: 1.15rem; font-weight: 900; margin: 0; color: #ffffff;">
+              Identitas Pendidik &amp; Pengembang Karya
+            </h2>
+          </div>
+          <p style="font-size: 0.78rem; color: #94a3b8; margin: 0.25rem 0 0;">
+            Media Pembelajaran Interaktif (MPI) • Dikembangkan oleh <strong style="color: #38bdf8;">@ajisosiologi 2026</strong>
+          </p>
+        </div>
+        <button 
+          type="button" 
+          onclick="closeTeacherModal()" 
+          style="background: rgba(255,255,255,0.15); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center;"
+          title="Tutup"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Content (Scrollable 8 Poin Identitas Karya) -->
+      <div style="padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1;">
         
         <div class="identitas-items-grid">
           
@@ -1358,7 +1660,7 @@ export function generateStandaloneMpiHtml(
             <div style="min-width: 0; flex: 1;">
               <span class="identitas-meta-title" style="color: #64748b;">6. Nama Pengembang :</span>
               <span class="identitas-meta-val" style="font-weight: 800; color: #0f172a;">
-                ${activeConfig.namaPengembang || activeConfig.penyusun || 'Pendidik'}
+                ${activeConfig.namaPengembang || activeConfig.penyusun || '@ajisosiologi 2026'}
               </span>
             </div>
           </div>
@@ -1385,7 +1687,7 @@ export function generateStandaloneMpiHtml(
               <div style="min-width: 0; flex: 1;">
                 <span class="identitas-meta-title" style="color: #065f46;">8. FOTO PROFIL PENGEMBANG :</span>
                 <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">
-                  ${activeConfig.namaPengembang || activeConfig.penyusun || 'Pendidik'}
+                  ${activeConfig.namaPengembang || activeConfig.penyusun || '@ajisosiologi 2026'}
                 </div>
                 ${activeConfig.jabatan ? `<div style="font-size: 0.8rem; color: #059669; font-weight: 700;">${activeConfig.jabatan}</div>` : ''}
                 <div style="font-size: 0.8rem; color: #475569;">
@@ -1402,137 +1704,17 @@ export function generateStandaloneMpiHtml(
         <div style="margin-top: 1.25rem;">
           <button 
             type="button" 
-            id="btnGateToStep3" 
-            onclick="goToGateStep3()" 
+            onclick="closeTeacherModal()" 
             class="btn-action anim-hover-lift" 
-            style="width: 100%; justify-content: center; padding: 1rem 1.5rem; font-size: 1.05rem; font-weight: 900; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #4f46e5); box-shadow: 0 10px 25px -5px rgba(37,99,235,0.4);"
+            style="width: 100%; justify-content: center; padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 800; border-radius: 12px; background: #0f172a; color: white;"
           >
-            Pilih Aktivitas Pembelajaran →
+            Tutup
           </button>
         </div>
 
       </div>
 
     </div>
-
-    <!-- STEP 3: PILIHAN MODUL (SEPERTI GAMBAR USER: "Mau melakukan apa hari ini?") -->
-    <div id="gateStep3" class="gate-card gate-step3-card anim-slide-up" style="display: none;">
-      
-      <!-- Top Bar: Info Siswa & Kembali ke Identitas Karya -->
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #ebdcca;">
-        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 9999px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 0.78rem; font-weight: 700; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
-          <span>Peserta Didik: <strong id="lblStep3StudentNama" style="color: #0f172a;">-</strong> (<strong id="lblStep3StudentKelas" style="color: #0f172a;">-</strong>)</span>
-        </div>
-        <button 
-          type="button" 
-          onclick="backToGateStep2()" 
-          style="background: transparent; border: none; color: #64748b; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.65rem; border-radius: 8px;"
-        >
-          ← Lihat Identitas Karya
-        </button>
-      </div>
-
-      <!-- Headline & Subtitle persis seperti gambar user -->
-      <div style="text-align: center; margin-top: 1.5rem;">
-        <h1 style="color: #9c2518; font-size: 2.35rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; line-height: 1.2;">
-          Mau melakukan apa hari ini?
-        </h1>
-        <p style="color: #475569; font-size: 1rem; margin: 0.75rem auto 0; max-width: 580px; line-height: 1.5;">
-          Mulailah dari <strong style="color: #0f172a; font-weight: 900;">Belajar</strong>, lanjut ke <strong style="color: #0f172a; font-weight: 900;">Bermain</strong>, lalu uji dirimu di <strong style="color: #0f172a; font-weight: 900;">Berlatih</strong>.
-        </p>
-      </div>
-
-      <!-- 3 Kartu Pilihan Berurutan: 1. Belajar, 2. Bermain, 3. Berlatih -->
-      <div class="modules-choice-grid">
-        
-        <!-- KARTU 1: BELAJAR (Materi Pembelajaran) -->
-        <button 
-          type="button" 
-          id="btnSelectBelajar" 
-          onclick="selectModuleAndEnter('materi')" 
-          class="module-card-choice card-belajar"
-        >
-          <div class="module-card-circle">
-            <div class="module-icon-box" style="border-color: #7dd3fc; background: #f0f9ff;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-            </div>
-            <span style="font-size: 11px; font-weight: 800; color: #475569;">Belajar</span>
-          </div>
-
-          <div class="module-card-title">Belajar</div>
-
-          <div class="module-card-pill">
-            Materi Pembelajaran
-          </div>
-        </button>
-
-        <!-- KARTU 2: BERMAIN (Permainan Interaktif) -->
-        <button 
-          type="button" 
-          id="btnSelectBermain" 
-          onclick="selectModuleAndEnter('bermain')" 
-          class="module-card-choice card-bermain"
-        >
-          <div class="module-card-circle">
-            <div class="module-icon-box" style="border-color: #fda4af; background: #fff1f2;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="6" y1="12" x2="10" y2="12"/>
-                <line x1="8" y1="10" x2="8" y2="14"/>
-                <line x1="15" y1="13" x2="15.01" y2="13"/>
-                <line x1="18" y1="11" x2="18.01" y2="11"/>
-                <rect x="2" y="6" width="20" height="12" rx="2"/>
-              </svg>
-            </div>
-            <span style="font-size: 11px; font-weight: 800; color: #475569;">Bermain</span>
-          </div>
-
-          <div class="module-card-title">Bermain</div>
-
-          <div class="module-card-pill">
-            ${activeBermain.length} Permainan Interaktif
-          </div>
-        </button>
-
-        <!-- KARTU 3: BERLATIH (Soal Evaluasi) -->
-        <button 
-          type="button" 
-          id="btnSelectBerlatih" 
-          onclick="selectModuleAndEnter('latih')" 
-          class="module-card-choice card-berlatih"
-        >
-          <div class="module-card-circle">
-            <div class="module-icon-box" style="border-color: #fcd34d; background: #fffbeb;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <circle cx="12" cy="12" r="6"/>
-                <circle cx="12" cy="12" r="2"/>
-              </svg>
-            </div>
-            <span style="font-size: 11px; font-weight: 800; color: #475569;">Berlatih</span>
-          </div>
-
-          <div class="module-card-title">Berlatih</div>
-
-          <div class="module-card-pill">
-            ${activeLatih.length} Soal Evaluasi
-          </div>
-        </button>
-
-      </div>
-
-      <!-- Footer Info -->
-      <div style="text-align: center; margin-top: 1.5rem;">
-        <span style="font-size: 0.78rem; color: #64748b;">
-          💡 Klik salah satu kartu di atas untuk langsung membuka modul yang Anda inginkan.
-        </span>
-      </div>
-
-    </div>
-
   </div>
 
   <!-- HEADER -->
@@ -1560,10 +1742,17 @@ export function generateStandaloneMpiHtml(
         </div>
       </div>
       <div class="header-controls">
-        <button id="btnHeaderStudent" onclick="reopenGate()" class="btn-student" title="Klik untuk melihat Identitas Karya atau ubah nama">
+        <button id="btnHeaderStudent" onclick="openStudentModal()" class="btn-student" title="Klik untuk mengubah Identitas Peserta Didik">
           👤 <span id="hdrStudentName">Peserta Didik</span> (<span id="hdrStudentClass">${activeConfig.kelas}</span>)
         </button>
-        <button id="btnSoundToggle" class="btn-sound">🔊 Suara: AKTIF</button>
+        <button id="btnHeaderTeacher" onclick="openTeacherModal()" class="btn-teacher" title="Klik untuk melihat Identitas Pendidik &amp; Pengembang Karya">
+          🌟 <span>Identitas Pendidik</span>
+        </button>
+        <div style="display: inline-flex; align-items: center; gap: 0.25rem;">
+          <button id="btnMusicToggle" class="btn-sound" title="Putar / Hentikan Musik Latar Belakang (BGM)">🎵 Musik: AKTIF</button>
+          <button id="btnMusicSettings" onclick="openMusicModal()" class="btn-sound" style="padding: 0.4rem 0.55rem; font-size: 0.85rem;" title="Buka Pengaturan Musik, Suasana &amp; Volume">⚙️</button>
+        </div>
+        <button id="btnSoundToggle" class="btn-sound" title="Aktifkan/Nonaktifkan Efek Suara">🔊 Suara: AKTIF</button>
       </div>
     </div>
   </header>
@@ -1663,9 +1852,183 @@ export function generateStandaloneMpiHtml(
         ${activeConfig.nip ? ` • <span style="font-size: 0.8rem; color: #475569;">NIP: ${activeConfig.nip}</span>` : ''}
         ${activeConfig.sekolah ? `<br><span>Instansi: ${activeConfig.sekolah}</span>` : ''}
         ${activeConfig.kontak ? `<br><span style="font-size: 0.8rem; color: #0284c7;">Kontak: ${activeConfig.kontak}</span>` : ''}
+        <div style="margin-top: 0.4rem;">
+          <button 
+            type="button" 
+            onclick="openTeacherModal()" 
+            style="font-size: 0.78rem; font-weight: 800; color: #2563eb; background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0;"
+          >
+            🌟 Lihat Identitas Lengkap Pendidik &amp; Pengembang
+          </button>
+        </div>
       </div>
     </div>
   </footer>
+
+  <!-- MODAL PENGATURAN MUSIK OFFLINE (BGM ENGINE) -->
+  <div id="musicModalOverlay" class="music-modal-overlay">
+    <div class="music-modal-card anim-bounce-in">
+      
+      <!-- Modal Header -->
+      <div style="background: linear-gradient(135deg, #0f172a, #134e4a); color: white; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(20, 184, 166, 0.25); border: 1px solid rgba(45, 212, 191, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+            🎵
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0; color: #ffffff;">Pengaturan Musik Latar</h3>
+            <p style="font-size: 0.72rem; color: #99f6e4; margin: 0.15rem 0 0;">100% Offline Procedural Synthesizer &amp; Audio</p>
+          </div>
+        </div>
+        <button 
+          type="button" 
+          onclick="closeMusicModal()" 
+          style="background: rgba(255,255,255,0.15); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center;"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div style="padding: 1.25rem 1.5rem; overflow-y: auto; max-height: 75vh;">
+        
+        <!-- Status & Playback Control Card -->
+        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div id="modalEqIcon" style="display: flex; align-items: flex-end; gap: 3px; height: 22px; padding: 2px;">
+              <span class="eq-bar" style="width: 4px; height: 8px; background: #0d9488; border-radius: 2px;"></span>
+              <span class="eq-bar" style="width: 4px; height: 16px; background: #0d9488; border-radius: 2px;"></span>
+              <span class="eq-bar" style="width: 4px; height: 12px; background: #0d9488; border-radius: 2px;"></span>
+              <span class="eq-bar" style="width: 4px; height: 18px; background: #0d9488; border-radius: 2px;"></span>
+            </div>
+            <div>
+              <div id="modalBgmStatusText" style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">Memutar Musik</div>
+              <div id="modalBgmTrackDesc" style="font-size: 0.75rem; color: #64748b;">Lo-Fi Chill Belajar</div>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            id="modalBtnTogglePlay" 
+            onclick="bgm.toggle()" 
+            style="padding: 0.6rem 1.2rem; border-radius: 12px; border: none; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; background: #0d9488; color: white; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);"
+          >
+            ⏸ Jeda
+          </button>
+        </div>
+
+        <!-- Volume Slider -->
+        <div style="margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #334155;">Volume Musik</label>
+            <span id="modalVolumeLabel" style="font-size: 0.8rem; font-weight: 800; color: #0d9488;">35%</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <button 
+              type="button" 
+              onclick="bgm.toggleMute()" 
+              id="modalBtnMute" 
+              style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;"
+            >
+              🔊
+            </button>
+            <input 
+              type="range" 
+              id="modalVolumeSlider" 
+              min="0" 
+              max="100" 
+              value="35" 
+              oninput="bgm.setVolume(this.value / 100)" 
+              style="flex: 1; accent-color: #0d9488; cursor: pointer;"
+            />
+          </div>
+        </div>
+
+        <!-- Track Selection Presets -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: #334155; display: block; margin-bottom: 0.5rem;">
+            Pilihan Suasana Musik (Synthesizer)
+          </label>
+          
+          <div class="music-track-grid">
+            <!-- Track 1: Lo-Fi -->
+            <button type="button" class="music-track-btn" id="btnTrack_lofi" onclick="bgm.setTrack('lofi')">
+              <span style="font-size: 1.25rem;">☕</span>
+              <div style="min-width: 0; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">Lo-Fi Chill</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Rileks &amp; Fokus Belajar</div>
+              </div>
+            </button>
+
+            <!-- Track 2: Cheerful -->
+            <button type="button" class="music-track-btn" id="btnTrack_cheerful" onclick="bgm.setTrack('cheerful')">
+              <span style="font-size: 1.25rem;">☀️</span>
+              <div style="min-width: 0; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">Semangat Ceria</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Inspiratif &amp; Optimis</div>
+              </div>
+            </button>
+
+            <!-- Track 3: Acoustic -->
+            <button type="button" class="music-track-btn" id="btnTrack_acoustic" onclick="bgm.setTrack('acoustic')">
+              <span style="font-size: 1.25rem;">🌿</span>
+              <div style="min-width: 0; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">Harmoni Tenang</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Akustik Piano &amp; Hangat</div>
+              </div>
+            </button>
+
+            <!-- Track 4: Synthwave Arcade -->
+            <button type="button" class="music-track-btn" id="btnTrack_synthwave" onclick="bgm.setTrack('synthwave')">
+              <span style="font-size: 1.25rem;">🎮</span>
+              <div style="min-width: 0; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">8-Bit Retro Arcade</div>
+                <div style="font-size: 0.68rem; color: #64748b;">Game Zone Ceria</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Audio Upload Section -->
+        <div style="background: #f1f5f9; border: 1.5px dashed #cbd5e1; border-radius: 14px; padding: 0.9rem 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label style="font-size: 0.78rem; font-weight: 800; color: #334155; display: flex; align-items: center; gap: 0.35rem;">
+              <span>📁</span> File Audio MP3 Kustom
+            </label>
+            <span id="modalCustomStatusBadge" style="font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #e2e8f0; color: #64748b; font-weight: 700;">
+              Tidak ada file
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input 
+              type="file" 
+              id="modalCustomFileInput" 
+              accept="audio/*" 
+              onchange="handleCustomAudioUpload(event)" 
+              style="font-size: 0.78rem; width: 100%; color: #475569;"
+            />
+          </div>
+          <p style="font-size: 0.68rem; color: #64748b; margin: 0.35rem 0 0;">
+            Dukungan format: MP3, WAV, AAC, OGG. Musik disematkan langsung di dalam browser tanpa internet.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding: 0.85rem 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+        <button 
+          type="button" 
+          onclick="closeMusicModal()" 
+          style="padding: 0.55rem 1.25rem; border-radius: 10px; background: #0f172a; color: white; border: none; font-weight: 700; font-size: 0.85rem; cursor: pointer;"
+        >
+          Tutup
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <script>
     // =========================================================================
@@ -1677,7 +2040,7 @@ export function generateStandaloneMpiHtml(
     const dtLatih = ${dtLatihJson};
 
     // =========================================================================
-    // 100% OFFLINE AUDIO SYNTHESIZER (WEB AUDIO API)
+    // 100% OFFLINE AUDIO SYNTHESIZER & BGM ENGINE (WEB AUDIO API)
     // =========================================================================
     class OfflineAudio {
       constructor() {
@@ -1751,8 +2114,372 @@ export function generateStandaloneMpiHtml(
     }
     const audio = new OfflineAudio();
 
+    class OfflineBgmEngine {
+      constructor() {
+        this.ctx = null;
+        this.isPlaying = false;
+        this.isMuted = false;
+        this.timer = null;
+        this.step = 0;
+        this.gainNode = null;
+        this.track = CONFIG.bgmTrack || 'lofi';
+        this.volume = (typeof CONFIG.bgmVolume === 'number') ? CONFIG.bgmVolume : 0.35;
+        this.customAudioUrl = CONFIG.customAudioUrl || '';
+        this.customAudioName = CONFIG.customAudioName || '';
+        this.customAudioEl = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            this.ctx = new AudioCtx();
+            this.gainNode = this.ctx.createGain();
+            const currentVol = this.isMuted ? 0 : this.volume * 0.15;
+            this.gainNode.gain.setValueAtTime(currentVol, this.ctx.currentTime);
+            this.gainNode.connect(this.ctx.destination);
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      }
+
+      playNote(freq, time, duration, type, peakVol) {
+        if (!this.ctx || !this.isPlaying || this.isMuted) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const noteGain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(this.track === 'synthwave' ? 2200 : 1200, time);
+
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, time);
+
+          const peak = peakVol || 0.08;
+          noteGain.gain.setValueAtTime(0.0001, time);
+          noteGain.gain.exponentialRampToValueAtTime(peak, time + 0.03);
+          noteGain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+          osc.connect(filter);
+          filter.connect(noteGain);
+          noteGain.connect(this.gainNode);
+
+          osc.start(time);
+          osc.stop(time + duration);
+        } catch(e){}
+      }
+
+      start() {
+        this.init();
+        if (this.isPlaying) return;
+        this.isPlaying = true;
+
+        if (this.track === 'custom' && this.customAudioUrl) {
+          this.playCustomAudio();
+        } else {
+          this.schedule();
+        }
+        this.renderUI();
+      }
+
+      stop() {
+        this.isPlaying = false;
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+        if (this.customAudioEl) {
+          try {
+            this.customAudioEl.pause();
+          } catch(e){}
+        }
+        this.renderUI();
+      }
+
+      toggle() {
+        this.init();
+        if (this.isPlaying) {
+          this.stop();
+        } else {
+          this.start();
+        }
+      }
+
+      setTrack(trackId) {
+        this.track = trackId;
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+        if (this.customAudioEl) {
+          try { this.customAudioEl.pause(); } catch(e){}
+        }
+        this.step = 0;
+        if (this.isPlaying) {
+          if (trackId === 'custom' && this.customAudioUrl) {
+            this.playCustomAudio();
+          } else {
+            this.schedule();
+          }
+        }
+        this.renderUI();
+      }
+
+      setVolume(val) {
+        this.volume = Math.max(0, Math.min(1, val));
+        if (this.isMuted) this.isMuted = false;
+        if (this.gainNode && this.ctx) {
+          this.gainNode.gain.setValueAtTime(this.volume * 0.15, this.ctx.currentTime);
+        }
+        if (this.customAudioEl) {
+          this.customAudioEl.volume = this.volume;
+        }
+        this.renderUI();
+      }
+
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.gainNode && this.ctx) {
+          const targetVol = this.isMuted ? 0 : this.volume * 0.15;
+          this.gainNode.gain.setValueAtTime(targetVol, this.ctx.currentTime);
+        }
+        if (this.customAudioEl) {
+          this.customAudioEl.muted = this.isMuted;
+        }
+        this.renderUI();
+      }
+
+      playCustomAudio() {
+        if (!this.customAudioUrl) {
+          this.schedule();
+          return;
+        }
+        try {
+          if (!this.customAudioEl) {
+            this.customAudioEl = new Audio();
+            this.customAudioEl.loop = true;
+          }
+          this.customAudioEl.src = this.customAudioUrl;
+          this.customAudioEl.volume = this.isMuted ? 0 : this.volume;
+          this.customAudioEl.play().catch(() => {
+            // Fallback to synth if autoplay restriction or audio error occurs
+            this.schedule();
+          });
+        } catch(e) {
+          this.schedule();
+        }
+      }
+
+      schedule() {
+        if (!this.isPlaying || !this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        let beat = 0.32;
+        let chords = [];
+
+        if (this.track === 'cheerful') {
+          // G -> D -> Em -> C (Semangat Ceria & Inspiratif)
+          beat = 0.28;
+          chords = [
+            { bass: 98.00,  notes: [196.00, 246.94, 293.66, 392.00] }, // G
+            { bass: 146.83, notes: [220.00, 293.66, 369.99, 440.00] }, // D
+            { bass: 82.41,  notes: [164.81, 196.00, 246.94, 329.63] }, // Em
+            { bass: 130.81, notes: [261.63, 329.63, 392.00, 523.25] }, // C
+          ];
+        } else if (this.track === 'acoustic') {
+          // D -> F#m -> G -> A (Harmoni Tenang & Fokus)
+          beat = 0.35;
+          chords = [
+            { bass: 146.83, notes: [220.00, 293.66, 369.99, 440.00] }, // D
+            { bass: 92.50,  notes: [185.00, 220.00, 277.18, 369.99] }, // F#m
+            { bass: 98.00,  notes: [196.00, 246.94, 293.66, 392.00] }, // G
+            { bass: 110.00, notes: [220.00, 277.18, 329.63, 440.00] }, // A
+          ];
+        } else if (this.track === 'synthwave') {
+          // Am -> F -> C -> G (8-Bit Retro Arcade)
+          beat = 0.24;
+          chords = [
+            { bass: 110.00, notes: [220.00, 261.63, 329.63, 440.00] }, // Am
+            { bass: 87.31,  notes: [174.61, 220.00, 261.63, 349.23] }, // F
+            { bass: 130.81, notes: [261.63, 329.63, 392.00, 523.25] }, // C
+            { bass: 98.00,  notes: [196.00, 246.94, 293.66, 392.00] }, // G
+          ];
+        } else {
+          // 'lofi' default: Cmaj7 -> Am7 -> Fmaj7 -> Gsus4 (Lo-Fi Chill Belajar)
+          beat = 0.32;
+          chords = [
+            { bass: 130.81, notes: [261.63, 329.63, 392.00, 493.88] }, // C
+            { bass: 110.00, notes: [220.00, 261.63, 329.63, 392.00] }, // Am
+            { bass: 87.31,  notes: [174.61, 261.63, 349.23, 440.00] }, // F
+            { bass: 98.00,  notes: [196.00, 293.66, 392.00, 493.88] }, // G
+          ];
+        }
+
+        const chordIdx = Math.floor((this.step / 8) % chords.length);
+        const curChord = chords[chordIdx];
+        const stepInBar = this.step % 8;
+
+        // Sub bass note
+        if (stepInBar === 0) {
+          const bassType = this.track === 'synthwave' ? 'square' : 'triangle';
+          this.playNote(curChord.bass, now, beat * 3.5, bassType, 0.12);
+        }
+
+        // Arpeggio notes
+        const note = curChord.notes[stepInBar % curChord.notes.length];
+        const noteType = this.track === 'synthwave' ? 'sawtooth' : (this.track === 'acoustic' ? 'triangle' : 'sine');
+        this.playNote(note, now, beat * 1.2, noteType, 0.07);
+
+        if (stepInBar === 2 || stepInBar === 5) {
+          this.playNote(note * 1.5, now + 0.04, beat * 0.9, 'sine', 0.04);
+        }
+
+        this.step++;
+        this.timer = setTimeout(() => this.schedule(), beat * 1000);
+      }
+
+      getTrackTitle() {
+        if (this.track === 'custom') return this.customAudioName || 'Audio Kustom';
+        if (this.track === 'cheerful') return 'Semangat Ceria';
+        if (this.track === 'acoustic') return 'Harmoni Tenang';
+        if (this.track === 'synthwave') return '8-Bit Retro';
+        return 'Lo-Fi Chill';
+      }
+
+      renderUI() {
+        const title = this.getTrackTitle();
+
+        // 1. Update Header Music Button
+        const btn = document.getElementById('btnMusicToggle');
+        if (btn) {
+          if (this.isPlaying && !this.isMuted) {
+            btn.innerHTML = '🎵 ' + title + ': AKTIF';
+            btn.style.background = 'rgba(13, 148, 136, 0.4)';
+            btn.style.borderColor = '#2dd4bf';
+          } else {
+            btn.innerHTML = '🔇 Musik: MATI';
+            btn.style.background = 'rgba(255, 255, 255, 0.15)';
+            btn.style.borderColor = 'transparent';
+          }
+        }
+
+        // 2. Update Modal Elements
+        const modalStatusText = document.getElementById('modalBgmStatusText');
+        const modalTrackDesc = document.getElementById('modalBgmTrackDesc');
+        const modalBtnPlay = document.getElementById('modalBtnTogglePlay');
+        const modalVolLabel = document.getElementById('modalVolumeLabel');
+        const modalVolSlider = document.getElementById('modalVolumeSlider');
+        const modalBtnMute = document.getElementById('modalBtnMute');
+        const modalEq = document.getElementById('modalEqIcon');
+
+        if (modalStatusText) {
+          modalStatusText.textContent = (this.isPlaying && !this.isMuted) ? 'Memutar Musik' : 'Musik Dijeda';
+        }
+        if (modalTrackDesc) {
+          modalTrackDesc.textContent = title + ' • 100% Offline Engine';
+        }
+        if (modalBtnPlay) {
+          modalBtnPlay.innerHTML = this.isPlaying ? '⏸ Jeda' : '▶ Putar';
+          modalBtnPlay.style.background = this.isPlaying ? '#0d9488' : '#2563eb';
+        }
+        if (modalVolLabel) {
+          modalVolLabel.textContent = Math.round(this.volume * 100) + '%';
+        }
+        if (modalVolSlider) {
+          modalVolSlider.value = Math.round(this.volume * 100);
+        }
+        if (modalBtnMute) {
+          modalBtnMute.textContent = (this.isMuted || this.volume === 0) ? '🔇' : '🔊';
+        }
+
+        if (modalEq) {
+          const bars = modalEq.querySelectorAll('.eq-bar');
+          bars.forEach((bar, idx) => {
+            if (this.isPlaying && !this.isMuted) {
+              bar.style.animation = 'mpiEqBar 0.8s ease-in-out infinite alternate ' + (idx * 0.18) + 's';
+            } else {
+              bar.style.animation = 'none';
+              bar.style.height = '4px';
+            }
+          });
+        }
+
+        // 3. Highlight selected track preset button
+        const presetIds = ['lofi', 'cheerful', 'acoustic', 'synthwave'];
+        presetIds.forEach(id => {
+          const tBtn = document.getElementById('btnTrack_' + id);
+          if (tBtn) {
+            if (this.track === id) {
+              tBtn.classList.add('active');
+            } else {
+              tBtn.classList.remove('active');
+            }
+          }
+        });
+
+        // 4. Custom status badge
+        const customBadge = document.getElementById('modalCustomStatusBadge');
+        if (customBadge) {
+          if (this.customAudioUrl) {
+            customBadge.textContent = '✓ ' + (this.customAudioName || 'Audio Aktif');
+            customBadge.style.background = '#dcfce7';
+            customBadge.style.color = '#15803d';
+          } else {
+            customBadge.textContent = 'Tidak ada file';
+            customBadge.style.background = '#e2e8f0';
+            customBadge.style.color = '#64748b';
+          }
+        }
+      }
+    }
+    const bgm = new OfflineBgmEngine();
+
+    function openMusicModal() {
+      audio.click();
+      bgm.init();
+      const modal = document.getElementById('musicModalOverlay');
+      if (modal) {
+        modal.style.display = 'flex';
+        bgm.renderUI();
+      }
+    }
+
+    function closeMusicModal() {
+      audio.click();
+      const modal = document.getElementById('musicModalOverlay');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleCustomAudioUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      audio.click();
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        if (evt.target && evt.target.result) {
+          bgm.customAudioUrl = evt.target.result;
+          bgm.customAudioName = file.name;
+          bgm.setTrack('custom');
+          audio.success();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Auto unlock AudioContext on the first gesture anywhere on the window
+    function unlockAudioEngine() {
+      audio.init();
+      bgm.init();
+    }
+    ['click', 'touchstart', 'keydown', 'mousedown'].forEach(evt => {
+      window.addEventListener(evt, unlockAudioEngine, { once: true });
+    });
+
     // =========================================================================
-    // IDENTITAS SISWA & GERBANG ANIMASI KARYA
+    // IDENTITAS SISWA & GERBANG MASUK
     // =========================================================================
     var currentStudent = {
       nama: '',
@@ -1786,60 +2513,73 @@ export function generateStandaloneMpiHtml(
       currentStudent.nama = namaVal;
       currentStudent.kelas = kelasVal;
 
-      // Update badges in Step 2, Step 3, and Header
-      var lblNama = document.getElementById('labelBadgeNama');
-      var lblKelas = document.getElementById('labelBadgeKelas');
+      // Update badges in Step 3 and Header
       var hdrNama = document.getElementById('hdrStudentName');
       var hdrKelas = document.getElementById('hdrStudentClass');
       var s3Nama = document.getElementById('lblStep3StudentNama');
       var s3Kelas = document.getElementById('lblStep3StudentKelas');
 
-      if (lblNama) lblNama.textContent = namaVal;
-      if (lblKelas) lblKelas.textContent = kelasVal;
       if (hdrNama) hdrNama.textContent = namaVal;
       if (hdrKelas) hdrKelas.textContent = kelasVal;
       if (s3Nama) s3Nama.textContent = namaVal;
       if (s3Kelas) s3Kelas.textContent = kelasVal;
 
-      // Transition to Step 2 with animation
+      // Direct transition to Step 3 (Mau melakukan apa hari ini?)
       var step1 = document.getElementById('gateStep1');
-      var step2 = document.getElementById('gateStep2');
       var step3 = document.getElementById('gateStep3');
-      if (step3) step3.style.display = 'none';
-      step1.style.display = 'none';
-      step2.style.display = 'flex';
-      step2.className = 'gate-card anim-slide-up';
+      if (step1) step1.style.display = 'none';
+      if (step3) {
+        step3.style.display = 'block';
+        step3.className = 'gate-card gate-step3-card anim-slide-up';
+      }
+      bgm.start();
       return false;
     }
 
-    function backToGateStep1() {
+    function openStudentModal() {
       audio.click();
+      var overlay = document.getElementById('gateOverlay');
       var step1 = document.getElementById('gateStep1');
-      var step2 = document.getElementById('gateStep2');
       var step3 = document.getElementById('gateStep3');
+      var btnClose = document.getElementById('btnCloseGateStep1');
+
+      if (overlay) overlay.classList.remove('gate-hidden');
       if (step3) step3.style.display = 'none';
-      step2.style.display = 'none';
-      step1.style.display = 'block';
-      step1.className = 'gate-card anim-fade-in';
-      document.getElementById('inputGateNama').focus();
+      if (step1) {
+        step1.style.display = 'block';
+        step1.className = 'gate-card anim-bounce-in';
+      }
+      if (btnClose) {
+        btnClose.style.display = currentStudent.nama ? 'block' : 'none';
+      }
+      var inp = document.getElementById('inputGateNama');
+      if (inp) {
+        inp.focus();
+        if (currentStudent.nama) inp.value = currentStudent.nama;
+      }
     }
 
-    function goToGateStep3() {
-      audio.success();
-      var step2 = document.getElementById('gateStep2');
-      var step3 = document.getElementById('gateStep3');
-      step2.style.display = 'none';
-      step3.style.display = 'block';
-      step3.className = 'gate-card gate-step3-card anim-slide-up';
-    }
-
-    function backToGateStep2() {
+    function closeStudentModal() {
+      if (!currentStudent.nama) return;
       audio.click();
-      var step3 = document.getElementById('gateStep3');
-      var step2 = document.getElementById('gateStep2');
-      step3.style.display = 'none';
-      step2.style.display = 'flex';
-      step2.className = 'gate-card anim-slide-up';
+      var overlay = document.getElementById('gateOverlay');
+      if (overlay) overlay.classList.add('gate-hidden');
+    }
+
+    function openTeacherModal() {
+      audio.click();
+      var modal = document.getElementById('modalTeacherOverlay');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeTeacherModal() {
+      audio.click();
+      var modal = document.getElementById('modalTeacherOverlay');
+      if (modal) {
+        modal.style.display = 'none';
+      }
     }
 
     // =========================================================================
@@ -1983,6 +2723,7 @@ export function generateStandaloneMpiHtml(
       }
 
       audio.success();
+      bgm.start();
       var overlay = document.getElementById('gateOverlay');
       overlay.classList.add('gate-hidden');
       switchTab(tabId === 'latih' ? 'berlatih' : tabId);
@@ -1990,6 +2731,7 @@ export function generateStandaloneMpiHtml(
 
     function enterMpiApplication() {
       audio.success();
+      bgm.start();
       var overlay = document.getElementById('gateOverlay');
       overlay.classList.add('gate-hidden');
     }
@@ -1997,28 +2739,39 @@ export function generateStandaloneMpiHtml(
     function reopenGate() {
       audio.click();
       var overlay = document.getElementById('gateOverlay');
-      overlay.classList.remove('gate-hidden');
+      if (overlay) overlay.classList.remove('gate-hidden');
       var step1 = document.getElementById('gateStep1');
-      var step2 = document.getElementById('gateStep2');
       var step3 = document.getElementById('gateStep3');
       if (currentStudent.nama) {
-        step1.style.display = 'none';
-        step2.style.display = 'none';
-        step3.style.display = 'block';
-        step3.className = 'gate-card gate-step3-card anim-slide-up';
+        if (step1) step1.style.display = 'none';
+        if (step3) {
+          step3.style.display = 'block';
+          step3.className = 'gate-card gate-step3-card anim-slide-up';
+        }
       } else {
         if (step3) step3.style.display = 'none';
-        step2.style.display = 'none';
-        step1.style.display = 'block';
-        step1.className = 'gate-card anim-bounce-in';
+        if (step1) {
+          step1.style.display = 'block';
+          step1.className = 'gate-card anim-bounce-in';
+        }
       }
     }
 
-    document.getElementById('btnSoundToggle').addEventListener('click', () => {
-      audio.enabled = !audio.enabled;
-      document.getElementById('btnSoundToggle').textContent = audio.enabled ? '🔊 Suara: AKTIF' : '🔇 Suara: MATI';
-      if (audio.enabled) audio.click();
-    });
+    var musicBtn = document.getElementById('btnMusicToggle');
+    if (musicBtn) {
+      musicBtn.addEventListener('click', () => {
+        bgm.toggle();
+      });
+    }
+
+    var soundBtn = document.getElementById('btnSoundToggle');
+    if (soundBtn) {
+      soundBtn.addEventListener('click', () => {
+        audio.enabled = !audio.enabled;
+        soundBtn.textContent = audio.enabled ? '🔊 Suara: AKTIF' : '🔇 Suara: MATI';
+        if (audio.enabled) audio.click();
+      });
+    }
 
     // =========================================================================
     // NAVIGASI TAB DENGAN ATURAN PRASYARAT MPI
