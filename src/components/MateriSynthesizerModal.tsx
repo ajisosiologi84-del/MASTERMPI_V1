@@ -183,16 +183,55 @@ export const MateriSynthesizerModal: React.FC<MateriSynthesizerModalProps> = ({
                   </ul>
                 </div>
 
-                {/* Sample Case Study */}
+                {/* Sample Case Study & Concrete Examples */}
                 <div>
-                  <div className="text-xs font-extrabold uppercase text-slate-500 tracking-wider mb-1">
-                    Studi Kasus Kontekstual:
+                  <div className="text-xs font-extrabold uppercase text-slate-500 tracking-wider mb-1 flex items-center justify-between">
+                    <span>Studi Kasus &amp; Contoh Nyata (Dari Soal):</span>
+                    <span className="text-[10px] text-amber-700 font-bold">Stimulus &amp; Konteks Soal</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-950">
-                    <span className="font-bold block mb-0.5">{currentBab.studiKasus.judul}</span>
-                    <p className="text-slate-700 line-clamp-3">{currentBab.studiKasus.deskripsi}</p>
+                  <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950">
+                    <span className="font-bold block mb-1 text-slate-900">{currentBab.studiKasus.judul}</span>
+                    <p className="text-slate-700 whitespace-pre-line leading-relaxed">{currentBab.studiKasus.deskripsi}</p>
                   </div>
                 </div>
+
+                {/* Table: Matrix of Concepts & Examples */}
+                {currentBab.mediaList && currentBab.mediaList[0]?.tabelData && (
+                  <div>
+                    <div className="text-xs font-extrabold uppercase text-slate-500 tracking-wider mb-1.5 flex items-center justify-between">
+                      <span>{currentBab.mediaList[0].judul}:</span>
+                      <span className="text-[10px] text-blue-600 font-bold">Sintesis Konsep &amp; Contoh</span>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                      <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr className="bg-slate-100 text-slate-700 border-b border-slate-200">
+                            {currentBab.mediaList[0].tabelData.headers.map((h, hIdx) => (
+                              <th key={hIdx} className="p-2 font-black text-[11px]">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {currentBab.mediaList[0].tabelData.rows.map((row, rIdx) => (
+                            <tr key={rIdx} className="hover:bg-slate-50/80">
+                              <td className="p-2 font-bold text-slate-800 align-top">
+                                {row[0]}
+                              </td>
+                              <td className="p-2 text-slate-600 align-top">
+                                {row[1]}
+                              </td>
+                              <td className="p-2 text-blue-900 bg-blue-50/40 font-medium align-top">
+                                {row[2]}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
 
                 {/* Mini Quiz */}
                 <div>
