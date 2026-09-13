@@ -21,19 +21,25 @@ import {
   Eye,
   HelpCircle,
   Layers,
-  Trash2
+  Trash2,
+  Sparkles,
+  BookOpen,
+  Gamepad2,
+  ArrowRight
 } from 'lucide-react';
 
 interface UploadExcelViewProps {
   currentSoalList: SoalLatih[];
   onUpdateSoalList: (newSoalList: SoalLatih[]) => void;
   onGoToPreview: () => void;
+  onNavigateMenu?: (menu: 'materi' | 'bermain' | 'preview') => void;
 }
 
 export const UploadExcelView: React.FC<UploadExcelViewProps> = ({
   currentSoalList,
   onUpdateSoalList,
-  onGoToPreview
+  onGoToPreview,
+  onNavigateMenu
 }) => {
   const [parsedQuestions, setParsedQuestions] = useState<SoalLatih[] | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -465,6 +471,90 @@ export const UploadExcelView: React.FC<UploadExcelViewProps> = ({
 
         </div>
       )}
+
+      {/* Intelligent Auto-Synthesis Quick Actions for Materi and Games */}
+      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-3xl p-6 mb-8 text-white shadow-lg border border-indigo-700/50">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 mb-4 border-b border-white/10">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950">
+                Sintesis Cerdas Berbasis Soal
+              </span>
+              <span className="text-xs text-blue-200">
+                Tersedia {currentSoalList.length} Soal Aktif
+              </span>
+            </div>
+            <h3 className="text-lg font-black text-white">
+              Otomasi Lengkap: Susun Materi & Game Langsung dari Bank Soal
+            </h3>
+            <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+              Setelah mengunggah atau memiliki bank soal, sistem dapat mengekstrak seluruh konsep esensial menjadi 5 Bab Modul Belajar dan 5 Aktivitas Game Interaktif hanya dalam 1 klik!
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Quick Action 1: Materi */}
+          <div className="p-4 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between backdrop-blur-xs">
+            <div>
+              <div className="flex items-center gap-2 text-amber-300 text-xs font-black uppercase mb-1">
+                <BookOpen size={16} />
+                <span>Penyusun Materi Otomatis</span>
+              </div>
+              <div className="font-bold text-white text-sm mb-1">
+                Sintesis 5 Bab Modul Belajar
+              </div>
+              <p className="text-xs text-blue-100/80 mb-3">
+                Ekstrak capaian kompetensi, wacana stimulus, pembahasan mendalam, dan kuis mini ke dalam 5 Bab terstruktur.
+              </p>
+            </div>
+            {onNavigateMenu && (
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playClick();
+                  onNavigateMenu('materi');
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs"
+              >
+                <Sparkles size={14} className="text-amber-300" />
+                <span>Buka Penyusun Materi</span>
+                <ArrowRight size={13} />
+              </button>
+            )}
+          </div>
+
+          {/* Quick Action 2: Game */}
+          <div className="p-4 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between backdrop-blur-xs">
+            <div>
+              <div className="flex items-center gap-2 text-pink-300 text-xs font-black uppercase mb-1">
+                <Gamepad2 size={16} />
+                <span>Penyusun Game Otomatis</span>
+              </div>
+              <div className="font-bold text-white text-sm mb-1">
+                Sintesis 5 Aktivitas Game Interaktif
+              </div>
+              <p className="text-xs text-blue-100/80 mb-3">
+                Buat kuis tebak pasangan (Jodoh), pilah ciri (Klik), susun kronologi (Urut), tangkap kata kunci (Kumpul), dan sebab-akibat (Sambung).
+              </p>
+            </div>
+            {onNavigateMenu && (
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playClick();
+                  onNavigateMenu('bermain');
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs"
+              >
+                <Sparkles size={14} className="text-amber-300" />
+                <span>Buka Penyusun Game</span>
+                <ArrowRight size={13} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Current Active Bank Status */}
       <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">

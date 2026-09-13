@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { GameItem, GameType } from '../types';
+import { GameItem, GameType, SoalLatih, MpiConfig } from '../types';
 import { sound } from '../utils/audio';
 import { MediaAnimasiManager } from './MediaAnimasiManager';
 import { ConfirmDialog } from './ConfirmDialog';
+import { GameSynthesizerModal } from './GameSynthesizerModal';
 import { getGameIconBadge } from '../utils/iconHelper';
 import { 
   Gamepad2, 
@@ -20,21 +21,27 @@ import {
   Check,
   X,
   Shuffle,
-  Clock
+  Clock,
+  Wand2
 } from 'lucide-react';
 
 interface GameEditorViewProps {
   gameList: GameItem[];
   onUpdateGameList: (list: GameItem[]) => void;
   onGoToPreview: () => void;
+  soalList?: SoalLatih[];
+  config?: MpiConfig;
 }
 
 export const GameEditorView: React.FC<GameEditorViewProps> = ({
   gameList,
   onUpdateGameList,
-  onGoToPreview
+  onGoToPreview,
+  soalList = [],
+  config
 }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [isAutoModalOpen, setIsAutoModalOpen] = useState(false);
   const [showAddGameModal, setShowAddGameModal] = useState(false);
   const [newGameType, setNewGameType] = useState<GameType>('jodoh');
   const [newGameTitle, setNewGameTitle] = useState('');
@@ -54,6 +61,21 @@ export const GameEditorView: React.FC<GameEditorViewProps> = ({
       [field]: value
     };
     onUpdateGameList(updated);
+  };
+
+  const handleApplySynthesized = (generated: GameItem[], replaceAll: boolean) => {
+    if (replaceAll) {
+      onUpdateGameList(generated);
+      setSelectedIdx(0);
+    } else {
+      const highestId = gameList.length > 0 ? Math.max(...gameList.map(g => g.id)) : 0;
+      const remapped = generated.map((g, idx) => ({
+        ...g,
+        id: highestId + idx + 1
+      }));
+      onUpdateGameList([...gameList, ...remapped]);
+    }
+    sound.playSuccess();
   };
 
   // Add a new game
@@ -380,7 +402,24 @@ export const GameEditorView: React.FC<GameEditorViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Automatic Game Generator Button from Soal */}
+          <button
+            id="btn-auto-generate-games"
+            onClick={() => {
+              sound.playClick();
+              setIsAutoModalOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs shadow-md transition"
+            title="Otomatis susun 5 aktivitas game interaktif berdasarkan kumpulan soal evaluasi"
+          >
+            <Sparkles size={15} className="text-amber-300 animate-pulse" />
+            <span>Susun Otomatis dari Soal</span>
+            <span className="px-1.5 py-0.2 bg-white/20 rounded-full text-[10px]">
+              {soalList.length} Soal
+            </span>
+          </button>
+
           <button
             onClick={handleOpenAddGame}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition"
@@ -400,6 +439,34 @@ export const GameEditorView: React.FC<GameEditorViewProps> = ({
             <span>Uji Main di Preview</span>
           </button>
         </div>
+      </div>
+
+      {/* Auto Generator Banner Promotion */}
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 border border-purple-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black shrink-0 shadow-xs">
+            <Wand2 size={20} />
+          </div>
+          <div>
+            <div className="font-extrabold text-slate-900 text-xs sm:text-sm">
+              ✨ Solusi Otomatis Penyusun 5 Aktivitas Game Interaktif
+            </div>
+            <div className="text-slate-600 text-xs">
+              Miliki bank soal? Sistem dapat menyarikan pasangan konsep, kuis pilah ciri benar/salah, alur kronologis, kata kunci esensial, dan rantai logika menjadi 5 aktivitas game seketika!
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            sound.playClick();
+            setIsAutoModalOpen(true);
+          }}
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-xs transition shrink-0 flex items-center gap-1.5"
+        >
+          <Sparkles size={14} className="text-amber-300" />
+          <span>Buka Penyusun Otomatis Game</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -996,6 +1063,15 @@ export const GameEditorView: React.FC<GameEditorViewProps> = ({
         mode="alert"
         onConfirm={() => setAlertDialog({ isOpen: false, message: '' })}
         onCancel={() => setAlertDialog({ isOpen: false, message: '' })}
+      />
+
+      {/* Automated Game Synthesizer Modal from Soal */}
+      <GameSynthesizerModal
+        isOpen={isAutoModalOpen}
+        onClose={() => setIsAutoModalOpen(false)}
+        soalList={soalList}
+        config={config}
+        onApplyGames={handleApplySynthesized}
       />
 
     </div>

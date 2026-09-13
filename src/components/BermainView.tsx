@@ -69,7 +69,8 @@ export const BermainView: React.FC<BermainViewProps> = ({
   }, [activeGameIdx]);
 
   const resetCurrentGame = () => {
-    const g = dataBermain[activeGameIdx];
+    const g = currentGame || activeGames[safeIdx] || dataBermain[0];
+    if (!g) return;
 
     if (g.tipe === 'jodoh' && g.pasangan) {
       setJodohSelectedLeft(null);

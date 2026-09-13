@@ -360,6 +360,8 @@ export default function App() {
               gameList={gameList}
               onUpdateGameList={setGameList}
               onGoToPreview={handleOpenPreviewMode}
+              soalList={soalList}
+              config={mpiConfig}
             />
           )}
 
@@ -379,6 +381,7 @@ export default function App() {
               currentSoalList={soalList}
               onUpdateSoalList={setSoalList}
               onGoToPreview={handleOpenPreviewMode}
+              onNavigateMenu={(menu) => setActiveMenu(menu)}
             />
           )}
 
